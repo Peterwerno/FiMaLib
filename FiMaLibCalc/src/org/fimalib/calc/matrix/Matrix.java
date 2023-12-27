@@ -849,6 +849,41 @@ public class Matrix {
     }
     
     /**
+     * Calculate the inverted matrix
+     * 
+     * @param returnNewMatrix (boolean) see above
+     * @return
+     * @throws MatrixException 
+     */
+    public Matrix invert(boolean returnNewMatrix) throws MatrixException {
+        if(this.width != this.height) throw new MatrixException("Can only invert square matrices");
+        
+        double[][] newValues = this.values;
+        
+        if(returnNewMatrix) {
+            newValues = new double[this.height][this.width];
+            for(int row=0; row<this.height; row++) {
+                for(int col=0; col<this.width; col++) {
+                    newValues[row][col] = this.values[row][col];
+                }
+            }
+        }
+        
+        Matrix original = new Matrix(newValues);
+        Matrix union = new Matrix(this.height, this.width, 1.0);
+        
+        LESSolver solver = new LESSolver(original, union);
+        
+        solver.solve();
+        
+        if(returnNewMatrix)
+            return solver.getResults();
+        
+        this.values = solver.getResults().values;
+        return this;
+    }
+    
+    /**
      * Calculates the matrix' determinant.
      * 
      * @return the determinant (double)
