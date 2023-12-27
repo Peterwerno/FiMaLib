@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 peter.
+ * Copyright (C) 2023 peter.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,23 @@ import java.util.Date;
 import java.util.Locale;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author peter
  */
-public class D30_360Test {
+public class D30E_360_ISMATest {
     
-    D30_360_ISDA conv;
-    double delta = 0.0001;
+    D30E_360_ISMA conv;
+    public static double delta = 0.0001;
     
-    public D30_360Test() {
+    public D30E_360_ISMATest() {
     }
     
     @BeforeClass
@@ -51,7 +53,7 @@ public class D30_360Test {
     
     @Before
     public void setUp() {
-        this.conv = new D30_360_ISDA();
+        this.conv = new D30E_360_ISMA();
     }
     
     @After
@@ -69,41 +71,48 @@ public class D30_360Test {
         "20000229",
         "20050505",
         "19970703",
+        "20020630",
     };
     public static final String[] endDates = new String[] {
         "19911204",
         "20010115",
         "20060505",
         "19960601",
+        "20020731",
     };
     public static final boolean[] exceptions = new boolean[] {
         false,
         false,
         false,
         true,
+        false,
     };
     public static final double[] numerators = new double[] {
         3.0,
         316.0,
         360.0,
         0.0,
+        30.0,
     };
     public static final double[] denominators = new double[] {
         360.0,
         360.0,
         360.0,
         0.0,
+        360.0,
     };
     public static final double[] fractions = new double[] {
         3.0/360.0,
         316.0/360.0,
         1.0,
         0.0,
+        30.0/360.0,
     };
     
     
     @Test
     public void testNominator() throws ParseException {
+        System.out.println("Testing D30E_360_ISMA daycount convention");
         
         for(int i=0; i<startDates.length; i++) {
             Date startDate = getDate(startDates[i]);
