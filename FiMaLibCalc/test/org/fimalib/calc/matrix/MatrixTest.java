@@ -169,6 +169,19 @@ public class MatrixTest {
     }
     
     @Test
+    public void testMatrixInversion() throws Exception {
+        Matrix mat = new Matrix("((4,6),(3,8))");
+        Matrix result = mat.invert(true);
+        System.out.println("result of inversion: " + result);
+        assertEquals("Matrix inversion failed", result.toString(), "((0.571,-0.429),(-0.214,0.286))");
+        
+        mat = new Matrix("((1,2,1),(2,1,1),(2,0,0))");
+        result = mat.invert(true);
+        System.out.println("result of inversion: " + result);
+        assertEquals("Matrix inversion failed", result.toString(), "((0,0,0.5),(1,-1,0.5),(-1,2,-1.5))");
+    }
+    
+    @Test
     public void testMatrixDet() throws Exception {
         Matrix mat = new Matrix("((4,6),(3,8))");
         double det = mat.getDet();
