@@ -24,7 +24,7 @@ package org.fimalib.calc.matrix;
  * @author Peter Werno
  */
 public class LESSolver extends Matrix {
-    Vector results;
+    Matrix results;
         
     /**
      * Creates a new instance of LESSolver with a given height and width and
@@ -39,6 +39,21 @@ public class LESSolver extends Matrix {
         super(height, width);
         
         if(results.getHeight() != height) throw new MatrixException("Result vector must be same height as parameter matrix");
+        this.results = results;
+    }
+    
+    /**
+     * Creates a new instance of LESSolver with a given parameter matrix and
+     * a results - matrix.
+     * This might be used by the Matrix' class invert function
+     * 
+     * @param parameters (Matrix) the parameter matrix
+     * @param results (Matrix) the results matrix
+     * @throws MatrixException 
+     */
+    public LESSolver(Matrix parameters, Matrix results) throws MatrixException {
+        super(parameters.values);
+        
         this.results = results;
     }
     
@@ -117,7 +132,7 @@ public class LESSolver extends Matrix {
      * 
      * @return the results (Vector)
      */
-    public Vector getResults() {
+    public Matrix getResults() {
         return this.results;
     }
     
