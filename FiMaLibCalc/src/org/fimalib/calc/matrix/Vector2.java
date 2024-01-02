@@ -18,14 +18,12 @@
  */
 package org.fimalib.calc.matrix;
 
-import org.fimalib.calc.Number;
-
 /**
- * Impements the methods for Vector manipulation.
+ * Impements the methods for Vector2 manipulation.
  * 
- * @author Peter Werno
+ * @author peter
  */
-public class Vector extends Matrix {
+public class Vector2 extends Matrix2 {
     
     /**
      * Creates a new instance of Vector with a given height and all elements
@@ -33,7 +31,7 @@ public class Vector extends Matrix {
      * 
      * @param height (int) the height
      */
-    public Vector(int height) {
+    public Vector2(int height) {
         super(height, 1);
     }
     
@@ -42,9 +40,9 @@ public class Vector extends Matrix {
      * set to a predefined value
      * 
      * @param height (int) the height
-     * @param value (Number) the initial value
+     * @param value (double) the initial value
      */
-    public Vector(int height, Number value) {
+    public Vector2(int height, double value) {
         super(height, 1);
         
         for(int i=0; i<height; i++) {
@@ -55,9 +53,9 @@ public class Vector extends Matrix {
     /**
      * Creates a new instance of Vector with a predefined set of values
      * 
-     * @param values (Number[]) the values
+     * @param values (double[]) the values
      */
-    public Vector(Number[] values) {
+    public Vector2(double[] values) {
         super(values.length, 1);
         
         for(int i=0; i<values.length; i++) {
@@ -72,7 +70,7 @@ public class Vector extends Matrix {
      * @param initializationString (String) the String
      * @throws MatrixException 
      */
-    public Vector(String initializationString) throws MatrixException {
+    public Vector2(String initializationString) throws MatrixException {
         super("("+initializationString+")");
         
         super.transpose(false);

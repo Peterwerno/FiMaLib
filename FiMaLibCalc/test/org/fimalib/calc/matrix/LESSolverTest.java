@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import org.fimalib.calc.matrix.LESSolver;
+import org.fimalib.calc.matrix.LESSolver2;
 
 /**
  *
@@ -74,7 +74,7 @@ public class LESSolverTest {
     public void solverTest() throws Exception {
         for(int i=0; i<allTests.length; i++) {
             try {
-                LESSolver solver = new LESSolver(allTests[i]);
+                LESSolver2 solver = new LESSolver2(allTests[i]);
                 solver.solve();
                 
                 System.out.println("Result of solver: " + solver.toString());

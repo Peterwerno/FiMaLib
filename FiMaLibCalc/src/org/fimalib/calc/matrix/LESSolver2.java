@@ -18,18 +18,13 @@
  */
 package org.fimalib.calc.matrix;
 
-import org.fimalib.calc.Complex;
-import org.fimalib.calc.Double;
-import org.fimalib.calc.FiMaLibDivisionByZeroException;
-import org.fimalib.calc.Number;
-
 /**
- * The class LESSolver implements a solver algorithm for linear equation systems.
+ * The class LESSolver2 implements a solver algorithm for linear equation systems.
  * 
  * @author Peter Werno
  */
-public class LESSolver extends Matrix {
-    Matrix results;
+public class LESSolver2 extends Matrix2 {
+    Matrix2 results;
         
     /**
      * Creates a new instance of LESSolver with a given height and width and
@@ -37,10 +32,10 @@ public class LESSolver extends Matrix {
      * 
      * @param height (int) the height of the parameter matrix
      * @param width (int) the width of the parameter matrix
-     * @param results (Vector) the results vector
+     * @param results (Vector2) the results vector
      * @throws MatrixException 
      */
-    public LESSolver(int height, int width, Vector results) throws MatrixException {
+    public LESSolver2(int height, int width, Vector2 results) throws MatrixException {
         super(height, width);
         
         if(results.getHeight() != height) throw new MatrixException("Result vector must be same height as parameter matrix");
@@ -56,7 +51,7 @@ public class LESSolver extends Matrix {
      * @param results (Matrix2) the results matrix
      * @throws MatrixException 
      */
-    public LESSolver(Matrix parameters, Matrix results) throws MatrixException {
+    public LESSolver2(Matrix2 parameters, Matrix2 results) throws MatrixException {
         super(parameters.values);
         
         this.results = results;
@@ -66,14 +61,14 @@ public class LESSolver extends Matrix {
      * Creates a new instance of LESSolver with a given parameter matrix and
      * results vector(array)
      * 
-     * @param parameters (Number[][]) the parameters
-     * @param results (Number[]) the results vector
+     * @param parameters (double[][]) the parameters
+     * @param results (double[]) the results vector
      * @throws MatrixException 
      */
-    public LESSolver(Number[][] parameters, Number[] results) throws MatrixException {
+    public LESSolver2(double[][] parameters, double[] results) throws MatrixException {
         super(parameters);
         
-        this.results = new Vector(results);
+        this.results = new Vector2(results);
     }
     
     /**
@@ -84,10 +79,10 @@ public class LESSolver extends Matrix {
      * @param results (String) the results vector encoded
      * @throws MatrixException 
      */
-    public LESSolver(String parameters, String results) throws MatrixException {
+    public LESSolver2(String parameters, String results) throws MatrixException {
         super(parameters);
         
-        this.results = new Vector(results);
+        this.results = new Vector2(results);
     }
     
     /**
@@ -96,10 +91,10 @@ public class LESSolver extends Matrix {
      * @param initializerString (String) the encoded LES
      * @throws MatrixException 
      */
-    public LESSolver(String initializerString) throws MatrixException {
+    public LESSolver2(String initializerString) throws MatrixException {
         super(getMatrixPart(initializerString));
         
-        this.results = new Vector(getResultsPart(initializerString));
+        this.results = new Vector2(getResultsPart(initializerString));
     }
 
     /**
@@ -137,7 +132,7 @@ public class LESSolver extends Matrix {
      * 
      * @return the results (Vector2)
      */
-    public Matrix getResults() {
+    public Matrix2 getResults() {
         return this.results;
     }
     
@@ -161,7 +156,7 @@ public class LESSolver extends Matrix {
      * 
      * @throws MatrixException 
      */
-    public void solve() throws MatrixException, FiMaLibDivisionByZeroException {
+    public void solve() throws MatrixException {
         int size = this.height;
         if(this.width < size) size = this.width;
         
@@ -169,39 +164,17 @@ public class LESSolver extends Matrix {
         for(int i=0; i<size-1; i++) {
             sortForSolve(i);
             
-            Number value = this.values[i][i];
-            Number one;
-            if(value instanceof Complex) {
-                Complex cValue = (Complex)value;
-                if((cValue.getValue() == 0.0) && (cValue.getImg() == 0.0)) throw new MatrixException("TODO: Error cannot solve!");
-                one = new Complex(1.0, 0.0, this.nf);
-            }
-            else {
-                if(value.getValue() == 0.0) throw new MatrixException("TODO: Error cannot solve!");
-                one = new Double(1.0, this.nf);
-            }
+            double value = this.values[i][i];
+            if(value == 0.0) throw new MatrixException("TODO: Error cannot solve!");
             
-            
-            this.mulRow(i, one.div(value), false);
-            this.results.mulRow(i, one.div(value), false);
+            this.mulRow(i, 1.0/value, false);
+            this.results.mulRow(i, 1.0/value, false);
             
             for(int j=i+1; j<size; j++) {
-                Number val2 = this.values[j][i];
-                boolean zero = false;
-                
-                if(val2 instanceof Complex) {
-                    Complex cVal2 = (Complex)val2;
-                    zero = (cVal2.getValue() == 0.0) && (cVal2.getImg() == 0.0);
-                    val2 = new Complex(0.0,this.nf).sub(cVal2);
-                }
-                else {
-                    zero = val2.getValue() == 0.0;
-                    val2 = new Double(0.0, this.nf).sub(val2);
-                }
-                
-                if(!zero) {
-                    this.addRowToRow(i, j, val2, false);
-                    this.results.addRowToRow(i, j, val2, false);
+                double val2 = this.values[j][i];
+                if(val2 != 0.0) {
+                    this.addRowToRow(i, j, -val2, false);
+                    this.results.addRowToRow(i, j, -val2, false);
                 }
             }
         }
@@ -210,55 +183,22 @@ public class LESSolver extends Matrix {
         for(int i=size-1; i>=1; i--) {
             //sortForSolve(i);
             
-            Number value = this.values[i][i];
-            if(value instanceof Complex) {
-                Complex cValue = (Complex)value;
-                if((cValue.getValue() == 0.0) && (cValue.getImg() == 0.0)) throw new MatrixException("TODO: error cannot solve!");
-                value = new Complex(1.0, 0.0, this.nf).div(cValue);
-            }
-            else {
-                if(value.getValue() == 0.0) throw new MatrixException("TODO: error cannot solve!");
-                value = new Double(1.0, this.nf).div(value);
-            }
+            double value = this.values[i][i];
+            if(value == 0.0) throw new MatrixException("TODO: error cannot solve!");
             
-            this.mulRow(i, value, false);
-            this.results.mulRow(i, value, false);
+            this.mulRow(i, 1.0/value, false);
+            this.results.mulRow(i, 1.0/value, false);
             
             for(int j=i-1; j>=0; j--) {
-                Number val2 = this.values[j][i];
-                boolean zero = false;
-                if(val2 instanceof Complex) {
-                    Complex cVal2 = (Complex)val2;
-                    zero = (cVal2.getValue() == 0.0) && (cVal2.getImg() == 0.0);
-                    val2 = new Complex(0.0, 0.0, this.nf).sub(cVal2);
-                }
-                else {
-                    zero = val2.getValue() == 0.0;
-                    val2 = new Double(0.0, this.nf).sub(val2);
-                }
-                if(!zero) {
-                    this.addRowToRow(i, j, val2, false);
-                    this.results.addRowToRow(i, j, val2, false);
+                double val2 = this.values[j][i];
+                if(val2 != 0.0) {
+                    this.addRowToRow(i, j, -val2, false);
+                    this.results.addRowToRow(i, j, -val2, false);
                 }
             }
         }
         
         // Done. Results should be in the results vector
-    }
-    
-    /**
-     * Returns if a number is zero
-     * 
-     * @param value (Number) the number
-     * @return wether it is zero (boolean)
-     */
-    protected boolean isZero(Number value) {
-        if(value instanceof Complex) {
-            Complex cValue = (Complex)value;
-            return (cValue.getValue() == 0.0) && (cValue.getImg() == 0.0);
-        }
-        
-        return value.getValue() == 0.0;
     }
     
     /**
@@ -271,9 +211,9 @@ public class LESSolver extends Matrix {
     public void sortForSolve(int col) throws MatrixException {
         // TODO: Code this (basically check if there is a zero in [col,col] and shuffle
         
-        if(isZero(this.values[col][col])) {
+        if(this.values[col][col] == 0.0) {
             for(int i=col+1; i<this.height; i++) {
-                if(!isZero(this.values[i][col])) {
+                if(this.values[i][col] != 0.0) {
                     this.swapRows(col, i, false);
                     this.results.swapRows(col, i, false);
                     return;

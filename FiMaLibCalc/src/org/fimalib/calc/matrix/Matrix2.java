@@ -20,91 +20,66 @@ package org.fimalib.calc.matrix;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
-
 import java.util.Locale;
-import org.fimalib.calc.Complex;
-import org.fimalib.calc.Double;
-import org.fimalib.calc.FiMaLibDivisionByZeroException;
-import org.fimalib.calc.Number;
 
 /**
- * The matrix class stores a n x m Matrix and supplies a set of matrix 
+ * The matrix class stores a n x m Matrix2 and supplies a set of matrix 
  * manipulation/calculation methods.
  * 
  * The majority of manipulation methods will have an additional boolean
- * parameter (returnNewMatrix). If this is set to true, the original Matrix
- * object will remain unchanged. A new matrix object will be created that holds
- * the results of the manipulation and the new object will be returned.
- * If the parameter is set to false, the original Matrix will be manipulated
- * and the old values/contents will be lost.
+ parameter (returnNewMatrix). If this is set to true, the original Matrix2
+ object will remain unchanged. A new matrix object will be created that holds
+ the results of the manipulation and the new object will be returned.
+ If the parameter is set to false, the original Matrix2 will be manipulated
+ and the old values/contents will be lost.
  * 
  * @author Peter Werno
  */
-public class Matrix {
-    Number[][] values;
-    int height;
+public class Matrix2 {
+    double[][] values;
     int width;
+    int height;
     NumberFormat nf = NumberFormat.getInstance(Locale.US);
     
     /**
-     * Creates a new instance of Matrix with a given height and width all filled
-     * with zeros all of type "Double"
-     * 
-     * @param height (int) the height
-     * @param width (int) the width
-     */
-    public Matrix(int height, int width) {
-        this.values = new Number[height][width];
-        this.nf.setGroupingUsed(false);
-        
-        for(int row=0; row<height; row++) {
-            for(int col=0; col<width; col++) {
-                this.values[row][col] = new Double(0.0, this.nf);
-            }
-        }
-    }
-    
-    /**
-     * Create a new instance o Matrix with all elements 0 except the diagonal 
-     * filled with the value provided
+     * Create an empty Matrix (all elements 0) of a given size
      * 
      * @param height (int) the number of rows
      * @param width (int) the number of columns
-     * @param value (Number) the diagonal value
      */
-    public Matrix(int height, int width, Number value) {
+    public Matrix2(int height, int width) {
         this.height = height;
         this.width = width;
-        this.values = new Number[height][width];
+        this.values = new double[height][width];
+        this.nf.setGroupingUsed(false);
+    }
+    
+    /**
+     * Create a Matrix with all elements 0 except the diagonal filled with
+     * the value provided
+     * 
+     * @param height (int) the number of rows
+     * @param width (int) the number of columns
+     * @param value (double) the diagonal value
+     */
+    public Matrix2(int height, int width, double value) {
+        this.height = height;
+        this.width = width;
+        this.values = new double[height][width];
         this.nf.setGroupingUsed(false);
         
-        value.setNumberFormat(this.nf);
-        
-        for(int row=0; row<this.height; row++) {
-            for(int col=0; col<this.width; col++) {
-                if(value instanceof Complex) {
-                    if(row != col) 
-                        this.values[row][col] = new Complex(0.0, 0.0, this.nf);
-                    else
-                        this.values[row][col] = value;
-                }
-                else {
-                    if(row != col) 
-                        this.values[row][col] = new Double(0.0, this.nf);
-                    else
-                        this.values[row][col] = value;
-                }
-            }
+        for(int i=0; i<(width<height?width:height); i++) {
+            this.values[i][i] = value;
         }
     }
     
     /**
-     * Create a new instance of matrix with a predefined array of elements.
+     * Create a new matrix with a predefined array of elements.
      * 
-     * @param values (array of Number) the elements
+     * @param values (array of doubles) the elements
      * @throws MatrixException 
      */
-    public Matrix(Number[][] values) throws MatrixException {
+    public Matrix2(double[][] values) throws MatrixException {
         this.values = values;
         this.height = this.values.length;
         this.nf.setGroupingUsed(false);
@@ -130,7 +105,7 @@ public class Matrix {
      * @param initializeString (String) see above
      * @throws MatrixException 
      */
-    public Matrix(String initializeString) throws MatrixException {
+    public Matrix2(String initializeString) throws MatrixException {
         int strLen = initializeString.length();
         StringBuilder buf = new StringBuilder("");
         this.nf.setGroupingUsed(false);
@@ -188,7 +163,7 @@ public class Matrix {
         
         this.width = colCount;
         this.height = rowCount;
-        this.values = new Number[rowCount][colCount];
+        this.values = new double[rowCount][colCount];
         
         int curCol = 0;
         int curRow = 0;
@@ -208,12 +183,7 @@ public class Matrix {
                 case ',':
                     if(level == 2) {
                         try {
-                            if(buf.toString().contains("i")) {
-                                this.values[curRow][curCol] = new Complex(buf.toString(), this.nf);
-                            }
-                            else {
-                                this.values[curRow][curCol] = new Double(nf.parse(buf.toString()).doubleValue(), this.nf);
-                            }
+                            this.values[curRow][curCol] = nf.parse(buf.toString()).doubleValue();
                         }
                         catch (ParseException ex) {
                             throw new MatrixException("Error parsing value " + buf.toString(), ex);
@@ -250,7 +220,7 @@ public class Matrix {
             retVal.append("(");
             for(int j=0; j<this.width; j++) {
                 if(j>0) retVal.append(",");
-                retVal.append(this.values[i][j].toString());
+                retVal.append(nf.format(this.values[i][j]));
             }
             retVal.append(")");
         }
@@ -297,9 +267,9 @@ public class Matrix {
      * 
      * @param row (int) the row
      * @param col (int) the column
-     * @param value (Number) the new value for this position
+     * @param value (doulbe) the new value for this position
      */
-    public void setValue(int row, int col, Number value) {
+    public void setValue(int row, int col, double value) {
         this.values[row][col] = value;
     }
     
@@ -308,9 +278,9 @@ public class Matrix {
      * 
      * @param row (int) the row
      * @param col (int) the column
-     * @return the value at the given position (Number)
+     * @return the value at the given position (double)
      */
-    public Number getValue(int row, int col) {
+    public double getValue(int row, int col) {
         return this.values[row][col];
     }
     
@@ -322,27 +292,27 @@ public class Matrix {
     /**
      * Adds a scalar value to the matrix.
      * 
-     * @param value (Number) the scalar
+     * @param value (double) the scalar
      * @param returnNewMatrix (boolean) see above
-     * @return the Matrix
+     * @return the Matrix2
      * @throws MatrixException 
      */
-    public Matrix add(Number value, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 add(double value, boolean returnNewMatrix) throws MatrixException {
         if (returnNewMatrix) {
-            Number[][] retValues = new Number[height][width];
+            double[][] retValues = new double[height][width];
             
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    retValues[i][j] = this.values[i][j].add(value);
+                    retValues[i][j] = this.values[i][j] + value;
                 }
             }
             
-            return new Matrix(retValues);
+            return new Matrix2(retValues);
         }
         else {
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    this.values[i][j].add(value);
+                    this.values[i][j] += value;
                 }
             }
             
@@ -355,25 +325,25 @@ public class Matrix {
      * 
      * @param value (double) the scalar
      * @param returnNewMatrix (boolean) see above
-     * @return the Matrix
+     * @return the Matrix2
      * @throws MatrixException 
      */
-    public Matrix sub(Number value, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 sub(double value, boolean returnNewMatrix) throws MatrixException {
         if (returnNewMatrix) {
-            Number[][] retValues = new Number[height][width];
+            double[][] retValues = new double[height][width];
             
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    retValues[i][j] = this.values[i][j].sub(value);
+                    retValues[i][j] = this.values[i][j] - value;
                 }
             }
             
-            return new Matrix(retValues);
+            return new Matrix2(retValues);
         }
         else {
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    this.values[i][j].sub(value);
+                    this.values[i][j] -= value;
                 }
             }
             
@@ -384,27 +354,27 @@ public class Matrix {
     /**
      * Multiplies the matrix with a scalar value.
      * 
-     * @param value (Number) the scalar
+     * @param value (double) the scalar
      * @param returnNewMatrix (boolean) see above
-     * @return the Matrix
+     * @return the Matrix2
      * @throws MatrixException 
      */
-    public Matrix mul(Number value, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 mul(double value, boolean returnNewMatrix) throws MatrixException {
         if (returnNewMatrix) {
-            Number[][] retValues = new Number[height][width];
+            double[][] retValues = new double[height][width];
             
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    retValues[i][j] = this.values[i][j].mul(value);
+                    retValues[i][j] = this.values[i][j] * value;
                 }
             }
             
-            return new Matrix(retValues);
+            return new Matrix2(retValues);
         }
         else {
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    this.values[i][j].mul(value);
+                    this.values[i][j] *= value;
                 }
             }
             
@@ -415,28 +385,27 @@ public class Matrix {
     /**
      * Divides tha matrix by a scalar value.
      * 
-     * @param value (Number) the scalar
+     * @param value (double) the scalar
      * @param returnNewMatrix (boolean) see above
-     * @return the Matrix
+     * @return the Matrix2
      * @throws MatrixException 
-     * @throws org.fimalib.calc.FiMaLibDivisionByZeroException 
      */
-    public Matrix div(Number value, boolean returnNewMatrix) throws MatrixException, FiMaLibDivisionByZeroException {
+    public Matrix2 div(double value, boolean returnNewMatrix) throws MatrixException {
         if (returnNewMatrix) {
-            Number[][] retValues = new Number[height][width];
+            double[][] retValues = new double[height][width];
             
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    retValues[i][j] = this.values[i][j].div(value);
+                    retValues[i][j] = this.values[i][j] / value;
                 }
             }
             
-            return new Matrix(retValues);
+            return new Matrix2(retValues);
         }
         else {
             for(int i=0; i<this.height; i++) {
                 for(int j=0; j<this.width; j++) {
-                    this.values[i][j].div(value);
+                    this.values[i][j] /= value;
                 }
             }
             
@@ -451,33 +420,33 @@ public class Matrix {
     /**
      * Adds another matrix to the current matrix.
      * 
-     * @param other (Matrix) the other matrix
+     * @param other (Matrix2) the other matrix
      * @param returnNewMatrix (boolean) see above
-     * @return the result of the addition (Matrix)
+     * @return the result of the addition (Matrix2)
      * @throws MatrixException 
      */
-    public Matrix add(Matrix other, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 add(Matrix2 other, boolean returnNewMatrix) throws MatrixException {
         if(other.getWidth() != this.width) throw new MatrixException("Matrices must have identical width");
         if(other.getHeight() != this.height) throw new MatrixException("Matrices must have identical height");
-        Number[][] valResult = this.values;
+        double[][] valResult = this.values;
         
         if(returnNewMatrix) {
-            valResult = new Number[this.height][this.width];
+            valResult = new double[this.height][this.width];
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.width; col++) {
-                    valResult[row][col] = this.values[row][col].copy();
+                    valResult[row][col] = this.values[row][col];
                 }
             }
         }
         
         for(int row=0; row<this.height; row++) {
             for(int col=0; col<this.width; col++) {
-                valResult[row][col] = valResult[row][col].add(other.getValue(row, col));
+                valResult[row][col] += other.getValue(row, col);
             }
         }
         
         if(returnNewMatrix) {
-            return new Matrix(valResult);
+            return new Matrix2(valResult);
         }
         
         return this;
@@ -486,33 +455,33 @@ public class Matrix {
     /**
      * Subtracts another matrix from the current matrix.
      * 
-     * @param other (Matrix) the other matrix
+     * @param other (Matrix2) the other matrix
      * @param returnNewMatrix (boolean) see above
-     * @return the result of the subtraction (Matrix)
+     * @return the result of the subtraction (Matrix2)
      * @throws MatrixException 
      */
-    public Matrix sub(Matrix other, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 sub(Matrix2 other, boolean returnNewMatrix) throws MatrixException {
         if(other.getWidth() != this.width) throw new MatrixException("Matrices must have identical width");
         if(other.getHeight() != this.height) throw new MatrixException("Matrices must have identical height");
-        Number[][] valResult = this.values;
+        double[][] valResult = this.values;
         
         if(returnNewMatrix) {
-            valResult = new Number[this.height][this.width];
+            valResult = new double[this.height][this.width];
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.width; col++) {
-                    valResult[row][col] = this.values[row][col].copy();
+                    valResult[row][col] = this.values[row][col];
                 }
             }
         }
         
         for(int row=0; row<this.height; row++) {
             for(int col=0; col<this.width; col++) {
-                valResult[row][col] = valResult[row][col].sub(other.getValue(row, col));
+                valResult[row][col] -= other.getValue(row, col);
             }
         }
         
         if(returnNewMatrix) {
-            return new Matrix(valResult);
+            return new Matrix2(valResult);
         }
         
         return this;
@@ -520,29 +489,26 @@ public class Matrix {
     
     /**
      * Multiplies another matrix with the current matrix.
-     * This will always return a new Matrix object for the result, the original
-     * matrices will remain unchanged.
+     * This will always return a new Matrix2 object for the result, the original
+ matrices will remain unchanged.
      * 
-     * @param other (Matrix) the other matrix
-     * @return the result of the multiplication (Matrix)
+     * @param other (Matrix2) the other matrix
+     * @return the result of the multiplication (Matrix2)
      * @throws MatrixException 
      */
-    public Matrix mul(Matrix other) throws MatrixException {
+    public Matrix2 mul(Matrix2 other) throws MatrixException {
         if(this.width != other.getHeight()) throw new MatrixException("Matrix multiplication: second matrix height must equal first matrix width!");
         
-        Matrix retVal = new Matrix(this.height, other.getWidth());
+        Matrix2 retVal = new Matrix2(this.height, other.getWidth());
         
         for(int row=0; row<this.height; row++) {
             for(int col=0; col<other.getWidth(); col++) {
                 // sum up the products of all elements in OLD row with all elements in NEW col
                 
-                Number value = null;
+                double value = 0.0;
                 
                 for(int i=0; i<this.width; i++) {
-                    if(i == 0) 
-                        value = this.values[row][i].mul(other.getValue(i, col));
-                    else
-                        value = value.add(this.values[row][i].mul(other.getValue(i, col)));
+                    value += this.values[row][i] * other.getValue(i, col);
                 }
                 
                 retVal.setValue(row, col, value);
@@ -558,25 +524,25 @@ public class Matrix {
     
     /**
      * Transposes a matrix (i.e. flips across the diagonal and turns 
-     * an n x m Matrix into an m x n Matrix)
+ an n x m Matrix2 into an m x n Matrix2)
      * 
      * @param returnNewMatrix (boolean) see above
-     * @return The transposed Matrix (Matrix)
+     * @return 
      */
-    public Matrix transpose(boolean returnNewMatrix) {
+    public Matrix2 transpose(boolean returnNewMatrix) {
         if(returnNewMatrix) {
-            Matrix retVal = new Matrix(this.width, this.height);
+            Matrix2 retVal = new Matrix2(this.width, this.height);
             
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.width; col++) {
-                    retVal.setValue(col, row, this.values[row][col].copy());
+                    retVal.setValue(col, row, this.values[row][col]);
                 }
             }
             
             return retVal;
         }
         
-        Number[][] newValues = new Number[this.width][this.height];
+        double[][] newValues = new double[this.width][this.height];
         
         for(int row=0; row<this.height; row++) {
             for(int col=0; col<this.width; col++) {
@@ -595,16 +561,16 @@ public class Matrix {
     /**
      * Returns a sub-matrix from the current matrix.
      * The parameter returnNewMatrix is omitted as this will always return a 
-     * new Matrix object!
+ new Matrix2 object!
      * 
-     * @param fromRow (int) the start row from which to copy
-     * @param toRow (int) the end row
-     * @param fromCol (int) the from column from which to copy
-     * @param toCol (int) the end column
-     * @return the sub-matrix (Matrix)
+     * @param fromRow
+     * @param toRow
+     * @param fromCol
+     * @param toCol
+     * @return the sub-matrix
      * @throws MatrixException 
      */
-    public Matrix getSubMatrix(int fromRow, int toRow, int fromCol, int toCol) throws MatrixException {
+    public Matrix2 getSubMatrix(int fromRow, int toRow, int fromCol, int toCol) throws MatrixException {
         if(toRow < fromRow) throw new MatrixException("parameter toRow must be equal or greater than fromRow");
         if(toCol < fromCol) throw new MatrixException("parameter toCol must be equal or greater than fromCol");
         
@@ -614,11 +580,11 @@ public class Matrix {
         if(toRow >= this.height) throw new MatrixException("parameter toRow must be smaller than the matrix height");
         if(toCol >= this.width) throw new MatrixException("parameter toCol must be smaller than the matrix width");
         
-        Matrix retVal = new Matrix(toRow-fromRow+1, toCol-fromCol+1);
+        Matrix2 retVal = new Matrix2(toRow-fromRow+1, toCol-fromCol+1);
         
         for(int row=fromRow; row<=toRow; row++) {
             for(int col=fromCol; col<=toCol; col++) {
-                retVal.setValue(row-fromRow, col-fromCol, this.values[row][col].copy());
+                retVal.setValue(row-fromRow, col-fromCol, this.values[row][col]);
             }
         }
         
@@ -629,14 +595,13 @@ public class Matrix {
      * Returns a sub-matrix by dropping a given row and column from the original
      * matrix.
      * The parameter retrunNewMatrix is omitted as this will always return a
-     * new Matrix object!
-     * 
-     * @param dropRow (int) the row to drop
-     * @param dropCol (int) the column to drop
-     * @return the resulting sub-matrix (Matrix)
+ new Matrix2 object!
+     * @param dropRow
+     * @param dropCol
+     * @return 
      */
-    public Matrix getSubMatrix(int dropRow, int dropCol) {
-        Matrix retVal = new Matrix(this.height - 1, this.width - 1);
+    public Matrix2 getSubMatrix(int dropRow, int dropCol) {
+        Matrix2 retVal = new Matrix2(this.height - 1, this.width - 1);
         
         for(int row=0; row<dropRow; row++) {
             for(int col=0; col<dropCol; col++) {
@@ -666,34 +631,34 @@ public class Matrix {
      * @param row1 (int) the first row
      * @param row2 (int) the second row
      * @param returnNewMatrix (boolean) see above
-     * @return the matrix (Matrix)
+     * @return the matrix (Matrix2)
      * @throws MatrixException 
      */
-    public Matrix swapRows(int row1, int row2, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 swapRows(int row1, int row2, boolean returnNewMatrix) throws MatrixException {
         if(row1<0) throw new MatrixException("Row 1 must be 0 or greater");
         if(row2<0) throw new MatrixException("Row 2 must be 0 or greater");
         if(row1>=this.height) throw new MatrixException("Row 1 must be less than the Matrix' height");
         if(row2>=this.height) throw new MatrixException("Row 2 must be less than the Matrix' height");
         
-        Number[][] newValues = this.values;
+        double[][] newValues = this.values;
         
         if(returnNewMatrix) {
-            newValues = new Number[this.height][this.width];
+            newValues = new double[this.height][this.width];
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.width; col++) {
-                    newValues[row][col] = this.values[row][col].copy();
+                    newValues[row][col] = this.values[row][col];
                 }
             }
         }
         
         for(int col=0; col<this.width; col++) {
-            Number help = newValues[row1][col];
+            double help = newValues[row1][col];
             newValues[row1][col] = newValues[row2][col];
             newValues[row2][col] = help;
         }
         
         if(returnNewMatrix)
-            return new Matrix(newValues);
+            return new Matrix2(newValues);
         
         return this;
     }
@@ -703,32 +668,32 @@ public class Matrix {
      * This is needed e.g. for the linear equation solving algorithm.
      * 
      * @param row (int) the row number
-     * @param factor (Number) the factor to multiply with
+     * @param factor (double) the factor to multiply with
      * @param returnNewMatrix (boolean) see above
-     * @return the resulting matrix (Matrix)
+     * @return 
      * @throws MatrixException 
      */
-    public Matrix mulRow(int row, Number factor, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 mulRow(int row, double factor, boolean returnNewMatrix) throws MatrixException {
         if(row < 0) throw new MatrixException("Row number must be 0 or greater");
         if(row >= this.height) throw new MatrixException("Row number must be below the matrix' height");
         
-        Number[][] newValues = this.values;
+        double[][] newValues = this.values;
         
         if(returnNewMatrix) {
-            newValues = new Number[this.height][this.width];
+            newValues = new double[this.height][this.width];
             for(int r=0; r<this.height; r++) {
                 for(int col=0; col<this.width; col++) {
-                    newValues[r][col] = this.values[r][col].copy();
+                    newValues[r][col] = this.values[r][col];
                 }
             }
         }
         
         for(int col=0; col<this.width; col++) {
-            newValues[row][col] = newValues[row][col].mul(factor);
+            newValues[row][col] *= factor;
         }
         
         if(returnNewMatrix)
-            return new Matrix(newValues);
+            return new Matrix2(newValues);
         
         return this;
     }
@@ -740,30 +705,30 @@ public class Matrix {
      * @param col (int) the column number
      * @param factor (double) the factor to multiply with
      * @param returnNewMatrix (boolean) see above
-     * @return the resulting matric (Matrix)
+     * @return 
      * @throws MatrixException 
      */
-    public Matrix mulCol(int col, Number factor, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 mulCol(int col, double factor, boolean returnNewMatrix) throws MatrixException {
         if(col < 0) throw new MatrixException("Column number must be 0 or greater");
         if(col >= this.width) throw new MatrixException("Column number must be below the matrix' width");
         
-        Number[][] newValues = this.values;
+        double[][] newValues = this.values;
         
         if(returnNewMatrix) {
-            newValues = new Number[this.height][this.width];
+            newValues = new double[this.height][this.width];
             for(int r=0; r<this.height; r++) {
                 for(int c=0; c<this.width; c++) {
-                    newValues[r][c] = this.values[r][c].copy();
+                    newValues[r][c] = this.values[r][c];
                 }
             }
         }
         
         for(int row=0; row<this.height; row++) {
-            newValues[row][col] = newValues[row][col].mul(factor);
+            newValues[row][col] *= factor;
         }
         
         if(returnNewMatrix)
-            return new Matrix(newValues);
+            return new Matrix2(newValues);
         
         return this;
     }
@@ -776,32 +741,32 @@ public class Matrix {
      * @param sourceRow (int) the source row (will be unchanged)
      * @param destRow (int) the destination row (will be changed)
      * @param returnNewMatrix (boolean) see above
-     * @return the matrix (Matrix)
+     * @return the matrix (Matrix2)
      * @throws MatrixException 
      */
-    public Matrix addRowToRow(int sourceRow, int destRow, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 addRowToRow(int sourceRow, int destRow, boolean returnNewMatrix) throws MatrixException {
         if(sourceRow < 0) throw new MatrixException("Source Row must be 0 or greater");
         if(destRow < 0) throw new MatrixException("Destination Row must be 0 or greater");
         if(sourceRow >= this.height) throw new MatrixException("Source Row must be smaller than the matrix' height");
         if(destRow >= this.height) throw new MatrixException("Destination Row must be smaller than the matrix' height");
         
-        Number[][] newValues = this.values;
+        double[][] newValues = this.values;
         
         if(returnNewMatrix) {
-            newValues = new Number[this.height][this.width];
+            newValues = new double[this.height][this.width];
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.height; col++) {
-                    newValues[row][col] = this.values[row][col].copy();
+                    newValues[row][col] = this.values[row][col];
                 }
             }
         }
         
         for(int col=0; col<this.width; col++) {
-            newValues[destRow][col] = newValues[destRow][col].add(newValues[sourceRow][col]);
+            newValues[destRow][col] += newValues[sourceRow][col];
         }
         
         if(returnNewMatrix)
-            return new Matrix(newValues);
+            return new Matrix2(newValues);
         
         return this;
     }
@@ -813,34 +778,34 @@ public class Matrix {
      * 
      * @param sourceRow (int) the source row (will be unchanged)
      * @param destRow (int) the destination row (will be changed)
-     * @param factor (Number) the factor
+     * @param factor (double) the factor
      * @param returnNewMatrix (boolean) see above
-     * @return the matrix (Matrix)
+     * @return the matrix (Matrix2)
      * @throws MatrixException 
      */
-    public Matrix addRowToRow(int sourceRow, int destRow, Number factor, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 addRowToRow(int sourceRow, int destRow, double factor, boolean returnNewMatrix) throws MatrixException {
         if(sourceRow < 0) throw new MatrixException("Source Row must be 0 or greater");
         if(destRow < 0) throw new MatrixException("Destination Row must be 0 or greater");
         if(sourceRow >= this.height) throw new MatrixException("Source Row must be smaller than the matrix' height");
         if(destRow >= this.height) throw new MatrixException("Destination Row must be smaller than the matrix' height");
         
-        Number[][] newValues = this.values;
+        double[][] newValues = this.values;
         
         if(returnNewMatrix) {
-            newValues = new Number[this.height][this.width];
+            newValues = new double[this.height][this.width];
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.height; col++) {
-                    newValues[row][col] = this.values[row][col].copy();
+                    newValues[row][col] = this.values[row][col];
                 }
             }
         }
         
         for(int col=0; col<this.width; col++) {
-            newValues[destRow][col] = newValues[destRow][col].add(newValues[sourceRow][col].mul(factor));
+            newValues[destRow][col] += newValues[sourceRow][col] * factor;
         }
         
         if(returnNewMatrix)
-            return new Matrix(newValues);
+            return new Matrix2(newValues);
         
         return this;
     }
@@ -851,34 +816,34 @@ public class Matrix {
      * @param col1 (int) the first column
      * @param col2 (int) the second column
      * @param returnNewMatrix (boolean) see above
-     * @return the matrix (Matrix)
+     * @return the matrix (Matrix2)
      * @throws MatrixException 
      */
-    public Matrix swapCols(int col1, int col2, boolean returnNewMatrix) throws MatrixException {
+    public Matrix2 swapCols(int col1, int col2, boolean returnNewMatrix) throws MatrixException {
         if(col1<0) throw new MatrixException("Column 1 must be 0 or greater");
         if(col2<0) throw new MatrixException("Column 2 must be 0 or greater");
         if(col1>=this.height) throw new MatrixException("Column 1 must be less than the Matrix' width");
         if(col2>=this.height) throw new MatrixException("Column 2 must be less than the Matrix' width");
         
-        Number[][] newValues = this.values;
+        double[][] newValues = this.values;
         
         if(returnNewMatrix) {
-            newValues = new Number[this.height][this.width];
+            newValues = new double[this.height][this.width];
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.width; col++) {
-                    newValues[row][col] = this.values[row][col].copy();
+                    newValues[row][col] = this.values[row][col];
                 }
             }
         }
         
         for(int row=0; row<this.height; row++) {
-            Number help = newValues[row][col1];
+            double help = newValues[row][col1];
             newValues[row][col1] = newValues[row][col2];
             newValues[row][col2] = help;
         }
         
         if(returnNewMatrix)
-            return new Matrix(newValues);
+            return new Matrix2(newValues);
         
         return this;
     }
@@ -890,24 +855,24 @@ public class Matrix {
      * @return
      * @throws MatrixException 
      */
-    public Matrix invert(boolean returnNewMatrix) throws MatrixException, FiMaLibDivisionByZeroException {
+    public Matrix2 invert(boolean returnNewMatrix) throws MatrixException {
         if(this.width != this.height) throw new MatrixException("Can only invert square matrices");
         
-        Number[][] newValues = this.values;
+        double[][] newValues = this.values;
         
         if(returnNewMatrix) {
-            newValues = new Number[this.height][this.width];
+            newValues = new double[this.height][this.width];
             for(int row=0; row<this.height; row++) {
                 for(int col=0; col<this.width; col++) {
-                    newValues[row][col] = this.values[row][col].copy();
+                    newValues[row][col] = this.values[row][col];
                 }
             }
         }
         
-        Matrix original = new Matrix(newValues);
-        Matrix union = new Matrix(this.height, this.width, new Double(1.0, this.nf));
+        Matrix2 original = new Matrix2(newValues);
+        Matrix2 union = new Matrix2(this.height, this.width, 1.0);
         
-        LESSolver solver = new LESSolver(original, union);
+        LESSolver2 solver = new LESSolver2(original, union);
         
         solver.solve();
         
@@ -924,23 +889,22 @@ public class Matrix {
      * @return the determinant (double)
      * @throws MatrixException 
      */
-    public Number getDet() throws MatrixException {
+    public double getDet() throws MatrixException {
         if(this.width != this.height) throw new MatrixException("Can only calculate determinants for square matrices");
         
         switch (this.width) {
             case 1:
-                return this.values[0][0].copy();
+                return this.values[0][0];
             case 2:
-                return this.values[0][0].mul(this.values[1][1]).sub(this.values[1][0].mul(this.values[0][1]));
+                return this.values[0][0] * this.values[1][1] - this.values[1][0] * this.values[0][1];
             default:
-                Number multiplier = new Double(1.0, this.nf);
-                Number value = null;
+                double multiplier = 1.0;
+                double value = 0.0;
                 for(int i=0; i<this.width; i++) {
-                    value.add(getSubMatrix(0, i).getDet()).mul(this.values[0][i]).mul(multiplier);
-                    multiplier = multiplier.mul(new Double(-1.0, this.nf));
+                    value += getSubMatrix(0, i).getDet() * this.values[0][i] * multiplier;
+                    multiplier *= -1.0;
                 }
                 return value;
         }
     }
-    
 }

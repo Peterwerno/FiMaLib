@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import org.fimalib.calc.cal.daycount.DaycountConvention;
 import org.fimalib.calc.cal.daycount.DaycountException;
-import org.fimalib.calc.matrix.LESSolver;
+import org.fimalib.calc.matrix.LESSolver2;
 import org.fimalib.calc.matrix.MatrixException;
 import org.fimalib.instrument.TermRate;
 
@@ -174,7 +174,7 @@ public class CubicSplinesInterpolator extends LinearCurveInterpolatorExtrapolato
         parameters[2*(this.sortedPillars.size()-1) + 2*(this.sortedPillars.size()-2)+1][(this.sortedPillars.size()-2)*4+1] = 2.0;
         
         try {
-            LESSolver solver = new LESSolver(parameters, results);
+            LESSolver2 solver = new LESSolver2(parameters, results);
             solver.solve();
             
             
