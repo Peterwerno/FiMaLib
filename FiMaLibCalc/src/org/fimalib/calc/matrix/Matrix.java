@@ -54,6 +54,8 @@ public class Matrix {
      * @param width (int) the width
      */
     public Matrix(int height, int width) {
+        this.height = height;
+        this.width = width;
         this.values = new Number[height][width];
         this.nf.setGroupingUsed(false);
         
@@ -889,6 +891,7 @@ public class Matrix {
      * @param returnNewMatrix (boolean) see above
      * @return
      * @throws MatrixException 
+     * @throws org.fimalib.calc.FiMaLibDivisionByZeroException 
      */
     public Matrix invert(boolean returnNewMatrix) throws MatrixException, FiMaLibDivisionByZeroException {
         if(this.width != this.height) throw new MatrixException("Can only invert square matrices");
@@ -936,7 +939,12 @@ public class Matrix {
                 Number multiplier = new Double(1.0, this.nf);
                 Number value = null;
                 for(int i=0; i<this.width; i++) {
-                    value.add(getSubMatrix(0, i).getDet()).mul(this.values[0][i]).mul(multiplier);
+                    if(i == 0) {
+                        value = getSubMatrix(0, i).getDet().mul(this.values[0][i]).mul(multiplier);
+                    }
+                    else {
+                        value = value.add(getSubMatrix(0, i).getDet().mul(this.values[0][i]).mul(multiplier));
+                    }
                     multiplier = multiplier.mul(new Double(-1.0, this.nf));
                 }
                 return value;
