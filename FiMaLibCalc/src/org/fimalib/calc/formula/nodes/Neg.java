@@ -21,6 +21,7 @@ package org.fimalib.calc.formula.nodes;
 import java.util.HashMap;
 import org.fimalib.calc.formula.FormulaException;
 import org.fimalib.calc.FiMaLibCalcException;
+import org.fimalib.calc.Boolean;
 import org.fimalib.calc.Complex;
 import org.fimalib.calc.Double;
 import org.fimalib.calc.Number;
@@ -63,6 +64,10 @@ public class Neg extends Node {
         
         if(retVal instanceof Complex)
             multiplier = new Complex(-1.0, 0.0, retVal.getNumberFormat());
+        else if(retVal instanceof Boolean) {
+            Boolean bVal = (Boolean)retVal;
+            return bVal.not();
+        }
         else
             multiplier = new Double(-1.0, retVal.getNumberFormat());
         
