@@ -79,4 +79,14 @@ public class Variable extends Node {
     public String toString() {
         return this.name;
     }
+
+    /**
+     * Returns the level of the node
+     * 
+     * @return the level (int)
+     */
+    @Override
+    public int getLevel() {
+        return Node.LEVEL_FUNCTION_CONST;
+    }
 }

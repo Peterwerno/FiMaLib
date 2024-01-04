@@ -96,12 +96,28 @@ public class And extends Node {
      */
     @Override
     public String toString() {
-        StringBuilder retVal = new StringBuilder("(");
+        int level0 = this.subNodes[0].getLevel();
+        int level1 = this.subNodes[1].getLevel();
+        
+        StringBuilder retVal = new StringBuilder("");
+        if(level0<=this.getLevel()) retVal.append("(");
         retVal.append(this.subNodes[0].toString());
-        retVal.append(")&&(");
+        if(level0<=this.getLevel()) retVal.append(")");
+        retVal.append("&&");
+        if(level1<=this.getLevel()) retVal.append("(");
         retVal.append(this.subNodes[1].toString());
-        retVal.append(")");
+        if(level1<=this.getLevel()) retVal.append(")");
+        
         return retVal.toString();
     }
-    
+
+    /**
+     * Returns the level of the node
+     * 
+     * @return the level (int)
+     */
+    @Override
+    public int getLevel() {
+        return Node.LEVEL_LOGIC;
+    }
 }

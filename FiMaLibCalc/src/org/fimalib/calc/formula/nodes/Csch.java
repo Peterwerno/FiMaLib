@@ -92,5 +92,14 @@ public class Csch extends Node {
         
         return retVal.toString();
     }
-    
+
+    /**
+     * Returns the level of the node
+     * 
+     * @return the level (int)
+     */
+    @Override
+    public int getLevel() {
+        return Node.LEVEL_FUNCTION_CONST;
+    }
 }

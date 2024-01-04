@@ -29,6 +29,19 @@ import java.util.HashMap;
  * @author Peter Werno
  */
 public abstract class Node {
+    /*
+    * Definitions for the level value that should be returned by the
+    * method getLevel.
+    * This is useful when reconstructing the string representation of the
+    * formula, as it can be used to determine wether or not brackets need to 
+    * be used.
+    */
+    public static final int LEVEL_LOGIC             = 1;
+    public static final int LEVEL_ADDITION          = 2;
+    public static final int LEVEL_MULTIPLICATION    = 3;
+    public static final int LEVEL_EXPONENTIAL       = 4;
+    public static final int LEVEL_FUNCTION_CONST    = 5;
+    
     int nodeCount;
     Node[] subNodes;
     
@@ -138,6 +151,8 @@ public abstract class Node {
     public abstract Node integrate(String parameterName) throws FormulaException;
     
     public abstract String getName();
+    
+    public abstract int getLevel();
     
     @Override
     public abstract String toString();

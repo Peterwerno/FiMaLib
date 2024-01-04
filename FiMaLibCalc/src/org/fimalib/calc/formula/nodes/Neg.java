@@ -91,9 +91,11 @@ public class Neg extends Node {
      */
     @Override
     public String toString() {
-        StringBuilder retVal = new StringBuilder("-(");
+        StringBuilder retVal = new StringBuilder("(-");
         
+        if(this.subNodes[0].getLevel() < this.getLevel()) retVal.append("(");
         retVal.append(this.subNodes[0].toString());
+        if(this.subNodes[0].getLevel() < this.getLevel()) retVal.append(")");
         retVal.append(")");
         
         return retVal.toString();
@@ -108,5 +110,14 @@ public class Neg extends Node {
     public String getName() {
         return "Neg";
     }
-    
+
+    /**
+     * Returns the level of the node
+     * 
+     * @return the level (int)
+     */
+    @Override
+    public int getLevel() {
+        return Node.LEVEL_FUNCTION_CONST;
+    }
 }
