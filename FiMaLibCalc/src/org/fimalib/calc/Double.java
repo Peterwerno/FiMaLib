@@ -19,6 +19,7 @@
 package org.fimalib.calc;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 /**
  * This class implements the operations on floating point values of type
@@ -77,7 +78,32 @@ public class Double extends Number {
         
         this.value = value;
     }
+    
+    /**
+     * Creates a new instance of Double with a given value encoded as a string
+     * 
+     * @param value (String) the encoded value
+     * @throws ParseException 
+     */
+    public Double(String value) throws ParseException {
+        super(NumberFormat.getInstance());
+        
+        this.value = this.format.parse(value).doubleValue();
+    }
 
+    /**
+     * Creates a new instance of Double with a given value encoded as as string
+     * and a given number format
+     * 
+     * @param value (String) the value
+     * @param format (NumberFormat) the number format
+     * @throws ParseException 
+     */
+    public Double(String value, NumberFormat format) throws ParseException {
+        super(format);
+        
+        this.value = this.format.parse(value).doubleValue();
+    }
     /**
      * Adds another double value to the value
      * 
@@ -114,6 +140,10 @@ public class Double extends Number {
      */
     @Override
     public Number add(Number otherNumber, boolean returnNewNumber) {
+        if(otherNumber instanceof Complex) {
+            Complex other = (Complex)otherNumber;
+            return new Complex(this.value + other.getValue(), other.getImg(), this.format);
+        }
         if(returnNewNumber) {
             return new Double(this.value + otherNumber.getValue(), this.format);
         }
@@ -159,6 +189,10 @@ public class Double extends Number {
      */
     @Override
     public Number sub(Number otherNumber, boolean returnNewNumber) {
+        if(otherNumber instanceof Complex) {
+            Complex other = (Complex)otherNumber;
+            return new Complex(this.value - other.getValue(), -other.getImg(), this.format);
+        }
         if(returnNewNumber) {
             return new Double(this.value - otherNumber.getValue(), this.format);
         }
@@ -204,6 +238,10 @@ public class Double extends Number {
      */
     @Override
     public Number mul(Number otherNumber, boolean returnNewNumber) {
+        if(otherNumber instanceof Complex) {
+            Complex other = (Complex)otherNumber;
+            return new Complex(this.value, 0.0, this.format).mul(otherNumber, false);
+        }
         if(returnNewNumber) {
             return new Double(this.value * otherNumber.getValue(), this.format);
         }
@@ -255,6 +293,10 @@ public class Double extends Number {
      */
     @Override
     public Number div(Number otherNumber, boolean returnNewNumber) throws FiMaLibDivisionByZeroException {
+        if(otherNumber instanceof Complex) {
+            Complex other = (Complex)otherNumber;
+            return new Complex(this.value, 0.0, this.format).div(otherNumber, false);
+        }
         if(otherNumber.getValue() == 0.0)
             throw new FiMaLibDivisionByZeroException("Division by zero");
         if(returnNewNumber) {
@@ -302,6 +344,10 @@ public class Double extends Number {
      */
     @Override
     public Number pow(Number otherNumber, boolean returnNewNumber) {
+        if(otherNumber instanceof Complex) {
+            Complex other = (Complex)otherNumber;
+            return new Complex(this.value, 0.0, this.format).pow(otherNumber, false);
+        }
         if(otherNumber instanceof Double) {
             Double other = (Double)otherNumber;
             return pow(other, returnNewNumber);
