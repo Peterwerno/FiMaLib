@@ -297,7 +297,7 @@ public abstract class Number extends java.lang.Number {
      * @return the result of the power operation (Number)
      */
     public Number pow(Number otherNumber) {
-        return mul(otherNumber, true);
+        return pow(otherNumber, true);
     }
 
     /* -----------------------------------------------------------------------
