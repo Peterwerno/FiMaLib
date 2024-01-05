@@ -20,6 +20,7 @@ package org.fimalib.calc.formula.nodes;
 
 import java.util.HashMap;
 import org.fimalib.calc.FiMaLibCalcException;
+import org.fimalib.calc.Complex;
 import org.fimalib.calc.Double;
 import org.fimalib.calc.Number;
 import org.fimalib.calc.formula.FormulaException;
@@ -91,7 +92,18 @@ public class Constant extends Node {
      */
     @Override
     public String toString() {
-        return this.constant.toString();
+        StringBuilder retVal = new StringBuilder("");
+        if(this.constant instanceof Complex) {
+            retVal.append("(").append(this.constant.toString()).append(")");
+        }
+        else {
+            double value = this.constant.getValue();
+            if(value < 0) retVal.append("(");
+            retVal.append(this.constant.toString());
+            if(value < 0) retVal.append(")");
+        }
+        
+        return retVal.toString();
     }
 
     /**
