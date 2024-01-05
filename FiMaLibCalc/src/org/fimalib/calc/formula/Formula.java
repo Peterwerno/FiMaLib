@@ -32,17 +32,48 @@ import java.util.Locale;
 import java.util.Stack;
 
 /**
- * This class is the base class for all subclasses making up a formula tree.
- * The tree represents a mathematical formula 
- * @author peter
+ * This class is to parse formulas into a formula tree.
+ * 
+ * The tree represents a mathematical formula.
+ * 
+ * For example, the formula "3*x^2" will be translated into a tree with the
+ * top node being a "*" (multiplication), the left subnode of which is the
+ * constant number "3" and the right subnode is the "^" (power) operation. 
+ * Finally, the left subnode of the power operation is the variable "x" and the
+ * right subnode is the number "2".
+ * 
+ * @author Peter Werno
  */
 public class Formula {
+    // Here, user defined functions can be stored
     public static ArrayList<Function> userDefinedFunctions = new ArrayList<>();
     
+    /**
+     * Generic formula parser which returns the formula as a tree
+     * 
+     * @param formula (String) the string-encoded formula
+     * @return the formula tree (Node)
+     * @throws FormulaException 
+     */
     public static Node parse(String formula) throws FormulaException {
         return parse(formula, NumberFormat.getInstance());
     }
     
+    /**
+     * Parses a formula string into a formula tree with a given number format.
+     * 
+     * The parsing is split up into multiple steps/stages. At first, any
+     * logical operators are parsed for. This is done by this method.
+     * Subsequently, addition and subtraction are parsed, which is done by
+     * another method, then multiplication and division, then exponential 
+     * (x to the yth power) and finally functions, variables and constants.
+     * This is to ensure that the order of execution is parsed correctly.
+     * 
+     * @param formula (String) the formula
+     * @param format (NumberFormat) the number format
+     * @return the formula tree (Node)
+     * @throws FormulaException 
+     */
     public static Node parse(String formula, NumberFormat format) throws FormulaException {
         int len = formula.length();
         StringBuilder leftstr = new StringBuilder("");
@@ -321,6 +352,14 @@ public class Formula {
         return nodeStack.pop();
     }
     
+    /**
+     * This method parses a formula (sub)string for + and - operations.
+     * 
+     * @param formula (String) the formula string
+     * @param format (NumberFormat) the number format
+     * @return the formula tree (Node)
+     * @throws FormulaException 
+     */
     protected static Node parseAdd(String formula, NumberFormat format) throws FormulaException {
         int len = formula.length();
         StringBuilder leftstr = new StringBuilder("");
@@ -421,6 +460,15 @@ public class Formula {
         return nodeStack.pop();
     }
     
+    /**
+     * This method parses the formula (sub)string for multiplication and division
+     * (*,/).
+     * 
+     * @param formula (String) the formula string
+     * @param format (NumberFormat) the number format
+     * @return the formula tree (Node)
+     * @throws FormulaException 
+     */
     protected static Node parseMul(String formula, NumberFormat format) throws FormulaException {
         int len = formula.length();
         StringBuilder leftstr = new StringBuilder("");
@@ -516,6 +564,15 @@ public class Formula {
         return nodeStack.pop();
     }
     
+    /**
+     * This method parses the formula (sub)string for exponential function
+     * (x to the yth power).
+     * 
+     * @param formula (String) the formula string
+     * @param format (NumberFormat) the number format
+     * @return the formula tree (Node)
+     * @throws FormulaException 
+     */
     public static Node parsePow(String formula, NumberFormat format) throws FormulaException {
         int len = formula.length();
         StringBuilder leftstr = new StringBuilder("");
@@ -602,6 +659,15 @@ public class Formula {
         return nodeStack.pop();
     }
     
+    /**
+     * This method parses the formula (sub)string for function calls, variables
+     * or constants.
+     * 
+     * @param formula (String) the formula string
+     * @param format (NumberFormat) the number format
+     * @return the formula tree (Node)
+     * @throws FormulaException 
+     */
     public static Node parseFunc(String formula, NumberFormat format) throws FormulaException {
         char c1 = formula.charAt(0);
         char cl = formula.charAt(formula.length() - 1);
@@ -641,6 +707,7 @@ public class Formula {
         if(formula.startsWith("csch")) return new Csch(parse(formula.substring(4), format));
 
         if(formula.startsWith("sqrt")) return new Sqrt(parse(formula.substring(4), format));
+        if(formula.startsWith("rand")) return new Rand(parse(formula.substring(4), format));
 
         if(formula.startsWith("sin")) return new Sin(parse(formula.substring(3), format));
         if(formula.startsWith("cos")) return new Cos(parse(formula.substring(3), format));
@@ -654,6 +721,7 @@ public class Formula {
         if(formula.startsWith("exp")) return new Exp(parse(formula.substring(3), format));
         if(formula.startsWith("log")) return new Log(parse(formula.substring(3), format));
         if(formula.startsWith("neg")) return new Neg(parse(formula.substring(3), format));
+        if(formula.startsWith("int")) return new Int(parse(formula.substring(3), format));
 
         if(formula.startsWith("ln")) return new Ln(parse(formula.substring(2), format));
         
@@ -695,6 +763,12 @@ public class Formula {
         }
     }
     
+    /**
+     * Tests if a certain string might be a variable name
+     * 
+     * @param formula (String) the potential variable name
+     * @return whether or not the string could be a variable (boolean)
+     */
     protected static boolean isVariable(String formula) {
         int len = formula.length();
         
@@ -709,9 +783,12 @@ public class Formula {
     
     public static void main(String[] args) throws Exception {
         //String formula = "(15-2+4^2*3+8+x^2+sin(1)^tan(x))/(-5)";
-        String formula = "if(x<5,if(x>2,1,2),3)";
-        Node node = parse(formula, NumberFormat.getInstance(Locale.US));
+        //String formula = "if(x<5,if(x>2,1,2),3)";
+        //String formula = "prod(x,1,10,x)";
+        String formula = "sum(x,1,10,x)";
         
+        Node node = parse(formula, NumberFormat.getInstance(Locale.US));
+        node.optimize();
         HashMap<String,Number> parameters = new HashMap<>();
         parameters.put("x", new Complex(0,1, NumberFormat.getInstance(Locale.US)));
         System.out.println("result: " + node.calculate(parameters));
