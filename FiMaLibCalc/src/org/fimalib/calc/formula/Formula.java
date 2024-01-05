@@ -743,10 +743,10 @@ public class Formula {
         // is it a variable? (or e or pi)
         if(isVariable(formula)) {
             if(formula.equals("e"))
-                return new Constant(new Double(Math.E));
+                return new Constant(new Double(Math.E, format));
             
             if(formula.equals("pi"))
-                return new Constant(new Double(Math.PI));
+                return new Constant(new Double(Math.PI, format));
             
             Variable var = new Variable(formula);
             return var;
