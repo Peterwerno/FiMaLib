@@ -69,17 +69,24 @@ public abstract class Function extends Node {
     }
     
     public static Function getFunction(String functionName, NumberFormat format) throws FormulaException {
-        try {
-            if(functionName.startsWith("if(")) {
-                Function ifFunc = new If();
-                parseFunction(functionName.substring(2), ifFunc, format);
-                return ifFunc;
-            }
+        if(functionName.startsWith("if(")) {
+            Function ifFunc = new If();
+            parseFunction(functionName.substring(2), ifFunc, format);
+            return ifFunc;
         }
-        catch (Exception ex) {
-            return null;
+
+        if(functionName.startsWith("sum(")) {
+            Function sumFunc = new Sum();
+            parseFunction(functionName.substring(3), sumFunc, format);
+            return sumFunc;
         }
-        
+
+        if(functionName.startsWith("prod(")) {
+            Function prodFunc = new Prod();
+            parseFunction(functionName.substring(4), prodFunc, format);
+            return prodFunc;
+        }
+            
         return null;
     }
     
@@ -136,6 +143,8 @@ public abstract class Function extends Node {
             Node paramNode = Formula.parse(leftstr.toString(), format);
             function.setParameterNode(paramCount++, paramNode);
         }
+        
+        if(paramCount < function.getMinimumParameters()) throw new FormulaException("Function " + function.getName() + " needs at least " + function.getMinimumParameters() + " parameters");
     }
     
     public abstract int getMinimumParameters();
