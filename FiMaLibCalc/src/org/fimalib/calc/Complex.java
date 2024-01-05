@@ -400,7 +400,7 @@ public class Complex extends Number {
     public Number div(Number otherNumber, boolean returnNewNumber) throws FiMaLibDivisionByZeroException {
         if(otherNumber instanceof Complex) {
             Complex other = (Complex)otherNumber;
-            return other.div(other, returnNewNumber);
+            return this.div(other, returnNewNumber);
         }
         
         double otherValue = otherNumber.getValue();
