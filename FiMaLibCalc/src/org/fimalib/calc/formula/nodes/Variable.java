@@ -89,4 +89,14 @@ public class Variable extends Node {
     public int getLevel() {
         return Node.LEVEL_FUNCTION_CONST;
     }
+    
+    /**
+     * Returns that this node is NOT a constant number
+     * 
+     * @return false (boolean)
+     */
+    @Override
+    public boolean isNumber() {
+        return false;
+    }
 }
