@@ -740,8 +740,14 @@ public class Formula {
         if(formula.equals("true") || formula.equals("false"))
             return new Constant(new Boolean(formula, format));
         
-        // is it a variable?
+        // is it a variable? (or e or pi)
         if(isVariable(formula)) {
+            if(formula.equals("e"))
+                return new Constant(new Double(Math.E));
+            
+            if(formula.equals("pi"))
+                return new Constant(new Double(Math.PI));
+            
             Variable var = new Variable(formula);
             return var;
         }
@@ -779,19 +785,5 @@ public class Formula {
         }
         
         return true;
-    }
-    
-    public static void main(String[] args) throws Exception {
-        //String formula = "(15-2+4^2*3+8+x^2+sin(1)^tan(x))/(-5)";
-        //String formula = "if(x<5,if(x>2,1,2),3)";
-        //String formula = "prod(x,1,10,x)";
-        String formula = "sum(x,1,10,x)";
-        
-        Node node = parse(formula, NumberFormat.getInstance(Locale.US));
-        node.optimize();
-        HashMap<String,Number> parameters = new HashMap<>();
-        parameters.put("x", new Complex(0,1, NumberFormat.getInstance(Locale.US)));
-        System.out.println("result: " + node.calculate(parameters));
-        System.out.println("back: " + node.toString());
     }
 }
