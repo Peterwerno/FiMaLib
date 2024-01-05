@@ -38,10 +38,20 @@ import org.fimalib.calc.formula.nodes.Node;
  * @author Peter Werno
  */
 public class If extends Function {
+    /**
+     * Creates a new instance of If
+     */
     public If() {
         super(3);
     }
 
+    /**
+     * Calculates the value of the formula node with a given parameter set
+     * 
+     * @param parameters (HashMap) the parameter(s)
+     * @return the result of the calculation
+     * @throws FiMaLibCalcException 
+     */
     @Override
     public Number calculate(HashMap<String, Number> parameters) throws FiMaLibCalcException {
         Number condition = parameterNodes[0].calculate(parameters);
@@ -60,21 +70,45 @@ public class If extends Function {
             throw new FiMaLibCalcException("Error in If funtion, condition is not boolean");
     }
 
+    /**
+     * Returns the derivative of the function
+     * 
+     * @param parameterName (String) the parameter by which to derive
+     * @return the derived function (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Returns the integration function of the function
+     * 
+     * @param parameterName (String) the parameter by which to integrate
+     * @return the integrated function (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Returns the function name
+     * 
+     * @return the name (String)
+     */
     @Override
     public String getName() {
         return "if";
     }
 
+    /**
+     * Returns the formula encoded as string
+     * 
+     * @return the formula (String)
+     */
     @Override
     public String toString() {
         StringBuilder retVal = new StringBuilder("if(");
@@ -90,11 +124,21 @@ public class If extends Function {
         return retVal.toString();
     }
 
+    /**
+     * Returns the minimum number of parameters
+     * 
+     * @return the minimum number of parameters (int)
+     */
     @Override
     public int getMinimumParameters() {
         return 2;
     }
 
+    /**
+     * Returns the maximum number of parameters
+     * 
+     * @return the maximum number of parameters (int)
+     */
     @Override
     public int getMaximumParameters() {
         return 3;
