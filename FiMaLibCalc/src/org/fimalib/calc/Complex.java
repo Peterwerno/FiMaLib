@@ -825,201 +825,431 @@ public class Complex extends Number {
     }
 
     /**
-     * Return the arc sinus of the number
+     * Return the arc sinus of the number.
+     * 
+     * Defined as 1/i * ln(i*x+sqrt(1-x^2))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc sinus (Number)
      */
     @Override
     public Number arcsin(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex i = new Complex(0.0, 1.0, this.format);
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = i.mul(this).add(one.sub(this.mul(this, true)).sqrt()).ln().div(i);
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc cosinus of the number
+     * Return the arc sinus of the number.
+     * 
+     * Defined as 1/i * ln(x + sqrt(x^2-1))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc cosinus (Number)
      */
     @Override
     public Number arccos(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex i = new Complex(0.0, 1.0, this.format);
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = this.add(this.mul(this).sub(one).sqrt()).ln().div(i);
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc tangent of the number
+     * Return the arc tangent of the number.
+     * 
+     * Defined as 1/2i * ln((i-x)/(i+x))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc tangent (Number)
      */
     @Override
     public Number arctan(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex i = new Complex(0.0, 1.0, this.format);
+        Complex two = new Complex(2.0, 0.0, this.format);
+        
+        try {
+            Number retVal = i.sub(this).div(i.add(this)).ln().div(two.mul(i));
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc cotangent of the number
+     * Return the arc cotangent of the number.
+     * 
+     * Defined as 1/2i * ln((z+i)/(z-i))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc cotangent (Number)
      */
     @Override
     public Number arccot(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex i = new Complex(0.0, 1.0, this.format);
+        Complex two = new Complex(2.0, 0.0, this.format);
+        
+        try {
+            Number retVal = this.add(i).div(this.sub(i)).ln().div(i.mul(two));
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc secant of the number
+     * Return the arc secant of the number.
+     * 
+     * Defined as 1/i * ln((1+sqrt(1-x^2))/x)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc secant (Number)
      */
     @Override
     public Number arcsec(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex i = new Complex(0.0, 1.0, this.format);
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = one.add(one.sub(this.mul(this)).sqrt()).div(this).ln().div(i);
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc cosecant of the number
+     * Return the arc cosecant of the number.
+     * 
+     * Defined as 1/i * ln((i + sqrt(x^2-1)) / x)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc cosecant (Number)
      */
     @Override
     public Number arccsc(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex i = new Complex(0.0, 1.0, this.format);
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = i.add(this.mul(this).sub(one).sqrt()).div(this).ln().div(i);
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the sinus hyperbolicus of the number
+     * Return the sinus hyperbolicus of the number.
+     * 
+     * Defined as sinh(a+bi) = sinh(a)*cos(b) + i * cosh(a)*sin(b)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the sinus hyperbolicus (Number)
      */
     @Override
     public Number sinh(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        double newReal = Math.sinh(this.real) * Math.cos(this.img);
+        double newImg = Math.cosh(this.real) * Math.sin(this.img);
+        
+        if(returnNewNumber)
+            return new Complex(newReal, newImg, this.format);
+        
+        this.real = newReal;
+        this.img = newImg;
+        
+        return this;
     }
 
     /**
-     * Return the cosinus hyperbolicus of the number
+     * Return the cosinus hyperbolicus of the number.
+     * 
+     * Defined as cosh(a+bi) = cosh(a)*cos(b) + i * sinh(a)*sin(b)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the cosinus hyperbolicus (Number)
      */
     @Override
     public Number cosh(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        double newReal = Math.cosh(this.real) * Math.cos(this.img);
+        double newImg = Math.sinh(this.real) * Math.sin(this.img);
+        
+        if(returnNewNumber)
+            return new Complex(newReal, newImg, this.format);
+        
+        this.real = newReal;
+        this.img = newImg;
+        
+        return this;
     }
 
     /**
-     * Return the tangent hyperbolicus of the number
+     * Return the tangent hyperbolicus of the number.
+     * 
+     * Defined as tanh(a+bi) = (tanh(a) + tanh(a)*tan(b)^2) / (1 + tanh(a)^2*tan(b)^2)
+     *                        + i * (tan(b) - tanh(a)^2*tan(b) / (1 + tanh(a)^2*tan(b)^2)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the tangent hyperbolicus (Number)
      */
     @Override
     public Number tanh(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        double tanh_a = Math.tanh(this.real);
+        double tan_b = Math.tan(this.img);
+        double divisor = 1.0 + tanh_a*tanh_a*tan_b*tan_b;
+        
+        double newReal = (tanh_a + tanh_a*tan_b*tan_b) / divisor;
+        double newImg  = (tan_b - tanh_a*tanh_a*tan_b) / divisor;
+        
+        if(returnNewNumber)
+            return new Complex(newReal, newImg, this.format);
+        
+        this.real = newReal;
+        this.img = newImg;
+        
+        return this;
     }
 
     /**
-     * Return the cotangent hyperbolicus of the number
+     * Return the cotangent hyperbolicus of the number.
+     * 
+     * Defined as coth(a+bi) = (coth(a) + coth(a)*cot(b)^2) / (coth(a)^2 + cot(b)^2) 
+     *                        + i * (cot(b) -coth(a)^2*cot(b)) / (coth(a)^2 + cot(b)^2)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the cotangent hyperbolicus (Number)
      */
     @Override
     public Number coth(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        double coth_a = 1.0 / Math.tanh(this.real);
+        double cot_b = 1.0 / Math.tan(this.img);
+        double divisor = coth_a*coth_a + cot_b*cot_b;
+        
+        double newReal = (coth_a + coth_a*cot_b*cot_b) / divisor;
+        double newImg  = (cot_b - coth_a*coth_a*cot_b) / divisor;
+        
+        if(returnNewNumber)
+            return new Complex(newReal, newImg, this.format);
+        
+        this.real = newReal;
+        this.img = newImg;
+        
+        return this;
     }
 
     /**
-     * Return the secant hyperbolicus of the number
+     * Return the secant hyperbolicus of the number.
+     * 
+     * Defined as sech(a+bi) = (cosh(a)*cos(b) - i*sinh(a)*sin(b))
+     *                          / (cosh(a)^2*cos(b)^2 + sinh(a)^2*sin(b)^2)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the secant hyperbolicus (Number)
      */
     @Override
     public Number sech(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        double sinh_a = Math.sinh(this.real);
+        double sin_b = Math.sin(this.img);
+        double cosh_a = Math.cosh(this.real);
+        double cos_b = Math.cos(this.img);
+        double divisor = cosh_a*cosh_a * cos_b*cos_b + sinh_a*sinh_a*sin_b*sin_b;
+        
+        double newReal = (cosh_a*cos_b) / divisor;
+        double newImg  = -(sinh_a*sin_b) / divisor;
+        
+        if(returnNewNumber)
+            return new Complex(newReal, newImg, this.format);
+        
+        this.real = newReal;
+        this.img = newImg;
+        
+        return this;
     }
 
     /**
-     * Return the cosecant hyperbolicus of the number
+     * Return the cosecant hyperbolicus of the number.
+     * 
+     * Defined as cach(a+bi) = (sinh(a)*cos(b) -i * cosh(a)*sin(b)) /
+     *                         (sinh(a)^2*cos(b)^2 + cosh(a)^2*sin(b)^2)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the cosecant hyperbolicus (Number)
      */
     @Override
     public Number csch(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        double sinh_a = Math.sinh(this.real);
+        double sin_b = Math.sin(this.img);
+        double cosh_a = Math.cosh(this.real);
+        double cos_b = Math.cos(this.img);
+        double divisor = sinh_a*sinh_a * cos_b*cos_b + cosh_a*cosh_a*sin_b*sin_b;
+        
+        double newReal = (sinh_a*cos_b) / divisor;
+        double newImg  = -(cosh_a*sin_b) / divisor;
+        
+        if(returnNewNumber)
+            return new Complex(newReal, newImg, this.format);
+        
+        this.real = newReal;
+        this.img = newImg;
+        
+        return this;
     }
 
     /**
-     * Return the arc sinus hyperbolicus of the number
+     * Return the arc sinus hyperbolicus of the number.
+     * 
+     * Defined as arcsinh(x) = ln(x + sqrt(x^2 + 1))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc sinus hyperbolicus (Number)
      */
     @Override
     public Number arcsinh(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = this.mul(this).add(one).sqrt().add(this).ln();
+            
+            return retVal;
+        }
+        catch (FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc cosinus hyperbolicus of the number
+     * Return the arc cosinus hyperbolicus of the number.
+     * 
+     * Defined as arccosh(x) = ln(x + sqrt(x^2 - 1))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc cosinus hyperbolicus (Number)
      */
     @Override
     public Number arccosh(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = this.mul(this).sub(one).sqrt().add(this).ln();
+            
+            return retVal;
+        }
+        catch (FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc tangent hyperbolicus of the number
+     * Return the arc tangent hyperbolicus of the number.
+     * 
+     * Defined as arctanh(x) = 1/2 * ln((1+x) / (1-x))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc tangent hyperbolicus (Number)
      */
     @Override
     public Number arctanh(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex one = new Complex(1.0, 0.0, this.format);
+        Complex two = new Complex(2.0, 0.0, this.format);
+        
+        try {
+            Number retVal = this.add(one).div(one.sub(this)).ln().div(two);
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc cotangent hyperbolicus of the number
+     * Return the arc cotangent hyperbolicus of the number.
+     * 
+     * Defined as arccoth(x) = 1/2 * ln((x+1)/(x-1))
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc cotangent hyperbolicus (Number)
      */
     @Override
     public Number arccoth(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex one = new Complex(1.0, 0.0, this.format);
+        Complex two = new Complex(2.0, 0.0, this.format);
+        
+        try {
+            Number retVal = this.add(one).div(this.sub(one)).ln().div(two);
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc secant hyperbolicus of the number
+     * Return the arc secant hyperbolicus of the number.
+     * 
+     * Defined as arcsech(x) = ln((1 + sqrt(1 - x^2)) / x)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc secant hyperbolicus (Number)
      */
     @Override
     public Number arcsech(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = one.sub(this.mul(this)).sqrt().add(one).div(this).ln();
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
 
     /**
-     * Return the arc cosecant hyperbolicus of the number
+     * Return the arc cosecant hyperbolicus of the number.
+     * 
+     * Defined as arccsch(x) = ln((1 + sqrt(x^2 + 1)) / x)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc cosecant hyperbolicus (Number)
      */
     @Override
     public Number arccsch(boolean returnNewNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Code this
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            Number retVal = this.mul(this).add(one).sqrt().add(one).div(this).ln();
+            
+            return retVal;
+        }
+        catch (FiMaLibDivisionByZeroException | FiMaLibUndefinedException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
     }
     
 }
