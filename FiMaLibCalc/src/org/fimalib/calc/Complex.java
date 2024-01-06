@@ -808,7 +808,15 @@ public class Complex extends Number {
      */
     @Override
     public Number csc(boolean returnNewNumber) {
-        double cosreal = Math.cos(this.real);
+        Complex one = new Complex(1.0, 0.0, this.format);
+        
+        try {
+            return one.div(this.sin());
+        }
+        catch (FiMaLibDivisionByZeroException ex) {
+            return new Complex(java.lang.Double.NaN, 0.0, this.format);
+        }
+/*        double cosreal = Math.cos(this.real);
         double coshimg = Math.cosh(this.img);
         double sinreal = Math.sin(this.real);
         double sinhimg = Math.sinh(this.img);
@@ -821,7 +829,7 @@ public class Complex extends Number {
         
         this.real = newReal;
         this.img = newImg;
-        return this;
+        return this;*/
     }
 
     /**
@@ -919,7 +927,7 @@ public class Complex extends Number {
     /**
      * Return the arc secant of the number.
      * 
-     * Defined as 1/i * ln((1+sqrt(1-x^2))/x)
+     * Defined as 1/i * ln((1+sqrt(abs(1-x^2)))/x)
      * 
      * @param returnNewNumber (boolean) see above
      * @return the arc secant (Number)
