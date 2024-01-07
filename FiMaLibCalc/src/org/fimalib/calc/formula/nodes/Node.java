@@ -143,13 +143,15 @@ public abstract class Node {
             }
         }
     }
-
+    
     public abstract Number calculate(HashMap<String, Number> parameters) throws FiMaLibCalcException;
     
     public abstract Node derive(String parameterName) throws FormulaException;
     
     public abstract Node integrate(String parameterName) throws FormulaException;
     
+    public abstract Node copy();
+
     public abstract String getName();
     
     public abstract int getLevel();

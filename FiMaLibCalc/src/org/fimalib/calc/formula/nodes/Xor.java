@@ -78,6 +78,16 @@ public class Xor extends Node {
         throw new FiMaLibCalcException("XOR-comparison (##) can only be applied to nested boolean values");
     }
 
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Xor(this.subNodes[0].copy(), this.subNodes[1].copy());
+    }
+
     @Override
     public Node derive(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

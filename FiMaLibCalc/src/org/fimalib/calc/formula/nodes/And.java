@@ -84,6 +84,16 @@ public class And extends Node {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new And(this.subNodes[0].copy(), this.subNodes[1].copy());
+    }
+
     @Override
     public String getName() {
         return "And";

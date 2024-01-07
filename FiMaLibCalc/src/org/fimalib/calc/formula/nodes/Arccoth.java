@@ -70,6 +70,16 @@ public class Arccoth extends Node {
     }
 
     /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Arccoth(this.subNodes[0].copy());
+    }
+
+    /**
      * Returns the name of the formula node (class)
      * 
      * @return the name of the class (String)

@@ -85,6 +85,21 @@ public class Or extends Node {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Or(this.subNodes[0].copy(), this.subNodes[1].copy());
+    }
+
+    /**
+     * Returns the node name.
+     * 
+     * @return the name (String)
+     */
     @Override
     public String getName() {
         return "Or";

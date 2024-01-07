@@ -65,14 +65,31 @@ public class Constant extends Node {
         return this.constant;
     }
 
+    /**
+     * Returns the derivative of the node
+     * 
+     * @param parameterName (String) the variable by with to derive
+     * @return the derivative (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Constant(new Double(0.0));
     }
 
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Constant(this.constant);
     }
 
     /**
