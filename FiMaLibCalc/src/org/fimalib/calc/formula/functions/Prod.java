@@ -212,16 +212,41 @@ public class Prod extends Function {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Prod(this.parameter, this.startValue.copy(), this.endValue.copy(), this.formula.copy());
+    }
+
+    /**
+     * Returns the name of the function
+     * 
+     * @return the name (String)
+     */
     @Override
     public String getName() {
         return "sum";
     }
 
+    /**
+     * Returns the node's level.
+     * 
+     * @return the level (int)
+     */
     @Override
     public int getLevel() {
         return Node.LEVEL_FUNCTION_CONST;
     }
 
+    /**
+     * Returns the string representation of the node
+     * 
+     * @return the content (String)
+     */
     @Override
     public String toString() {
         StringBuilder retVal = new StringBuilder("prod(");
@@ -236,6 +261,4 @@ public class Prod extends Function {
         
         return retVal.toString();
     }
-
-    
 }

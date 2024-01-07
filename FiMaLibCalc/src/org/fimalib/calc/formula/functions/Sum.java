@@ -210,6 +210,21 @@ public class Sum extends Function {
         return new Sum(this.parameter, this.startValue, this.endValue, this.formula.integrate(parameterName));
     }
 
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Sum(this.parameter, this.startValue.copy(), this.endValue.copy(), this.formula.copy());
+    }
+
+    /**
+     * Returns the name of the function
+     * 
+     * @return the name (String)
+     */
     @Override
     public String getName() {
         return "sum";

@@ -46,6 +46,21 @@ public class If extends Function {
     }
 
     /**
+     * Creates a new instance of If with given sub nodes
+     * 
+     * @param condition (Node) the condition node
+     * @param truePart (Node) the true part node
+     * @param falsePart (Node) the false part node
+     */
+    protected If(Node condition, Node truePart, Node falsePart) {
+        super(3);
+        
+        this.parameterNodes[0] = condition;
+        this.parameterNodes[1] = truePart;
+        this.parameterNodes[2] = falsePart;
+    }
+    
+    /**
      * Calculates the value of the formula node with a given parameter set
      * 
      * @param parameters (HashMap) the parameter(s)
@@ -92,6 +107,22 @@ public class If extends Function {
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        Node condition = this.parameterNodes[0].copy();
+        Node truePart = this.parameterNodes[1].copy();
+        Node falsePart = null;
+        if(this.parameterNodes[2] != null)
+            falsePart = this.parameterNodes[2].copy();
+        
+        return new If(condition, truePart, falsePart);
     }
 
     /**
