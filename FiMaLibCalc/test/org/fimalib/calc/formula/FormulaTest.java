@@ -322,4 +322,45 @@ public class FormulaTest {
         }
     }
     
+    String[] deriveSources = {
+        "x^3+x^2",
+        "sin(x^2)",
+        "cos(x^3)",
+        "tan(2*x)",
+        "cot(x^3)",
+        "sec(x^2)",
+        "csc(x+5)",
+    };
+    
+    String[] deriveResults = {
+        "3*x^2+2*x",
+        "2*x*cos(x^2)",
+        "3*x^2*(-sin(x^3))",
+        "2*sec(2*x)^2",
+        "3*x^2*(-(csc(x^3)^2))",
+        "2*x*sec(x^2)*tan(x^2)",
+        "(-(csc(x+5)*cot(x+5)))",
+    };
+    
+    @Test
+    public void testDerivative() {
+        NumberFormat nf = NumberFormat.getInstance(Locale.US);
+        nf.setGroupingUsed(false);
+        
+        for(int i=0; i<deriveSources.length; i++) {
+            try {
+                System.out.println("Derivative testing: " + deriveSources[i]);
+                Node node = Formula.parse(deriveSources[i], nf);
+                
+                Node derive = node.derive("x");
+                derive.optimize();
+                System.out.println("Result: " + derive.toString());
+                
+                assertEquals("Derivative incorrect", deriveResults[i], derive.toString());
+            }
+            catch (Exception ex) {
+                assertTrue("There should not be an exception", false);
+            }
+        }
+    }
 }
