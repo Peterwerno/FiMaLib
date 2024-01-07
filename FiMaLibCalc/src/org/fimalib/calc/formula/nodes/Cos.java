@@ -59,14 +59,47 @@ public class Cos extends Node {
         return this.subNodes[0].calculate(parameters).cos();
     }
 
+    /**
+     * Returns the derivative of the node
+     * 
+     * @param parameterName (String) the variable by with to derive
+     * @return the derivative (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Node subDer = this.subNodes[0].derive(parameterName);
+        
+        if(subDer.isNumber()) {
+            try {
+                Number result = subDer.calculate(null);
+                org.fimalib.calc.Double one = new org.fimalib.calc.Double(1.0, result.getNumberFormat());
+                
+                if(result.equals(one)) {
+                    return new Neg(new Sin(this.subNodes[0].copy()));
+                }
+            }
+            catch (FiMaLibCalcException ex) {
+                throw new FormulaException("Error deriving sin function", ex);
+            }
+        }
+        
+        return new Mul(subDer, new Neg(new Sin(this.subNodes[0].copy())));
     }
 
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Cos(this.subNodes[0].copy());
     }
 
     /**

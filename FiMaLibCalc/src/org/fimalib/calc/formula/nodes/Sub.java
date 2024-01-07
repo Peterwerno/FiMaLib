@@ -64,14 +64,38 @@ public class Sub extends Node {
         return lVal.sub(rVal);
     }
 
+    /**
+     * Returns the derivative of the node
+     * 
+     * @param parameterName (String) the variable by with to derive
+     * @return the derivative (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Sub(this.subNodes[0].derive(parameterName), this.subNodes[1].derive(parameterName));
     }
 
+    /**
+     * Returns the integral of the node
+     * 
+     * @param parameterName (String) the variable by which to integrate
+     * @return the integral (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node integrate(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new Sub(this.subNodes[0].integrate(parameterName), this.subNodes[1].integrate(parameterName));
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Sub(this.subNodes[0].copy(), this.subNodes[1].copy());
     }
 
     /**

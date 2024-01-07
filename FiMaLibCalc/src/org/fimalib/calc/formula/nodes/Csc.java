@@ -19,6 +19,7 @@
 package org.fimalib.calc.formula.nodes;
 
 import java.util.HashMap;
+import org.fimalib.calc.Double;
 import org.fimalib.calc.FiMaLibCalcException;
 import org.fimalib.calc.Number;
 import org.fimalib.calc.formula.FormulaException;
@@ -59,14 +60,47 @@ public class Csc extends Node {
         return this.subNodes[0].calculate(parameters).csc();
     }
 
+    /**
+     * Returns the derivative of the node
+     * 
+     * @param parameterName (String) the variable by with to derive
+     * @return the derivative (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Node subDer = this.subNodes[0].derive(parameterName);
+        
+        if(subDer.isNumber()) {
+            try {
+                Number result = subDer.calculate(null);
+                Double one = new Double(1.0, result.getNumberFormat());
+                
+                if(result.equals(one)) {
+                    return new Neg(new Mul(new Csc(this.subNodes[0].copy()), new Cot(this.subNodes[0].copy())));
+                }
+            }
+            catch (FiMaLibCalcException ex) {
+                throw new FormulaException("Error deriving sin function", ex);
+            }
+        }
+        
+        return new Mul(subDer, new Neg(new Mul(new Csc(this.subNodes[0].copy()), new Cot(this.subNodes[0].copy()))));
     }
 
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Csc(this.subNodes[0].copy());
     }
 
     /**

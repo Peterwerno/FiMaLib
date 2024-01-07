@@ -19,6 +19,8 @@
 package org.fimalib.calc.formula.nodes;
 
 import java.util.HashMap;
+import org.fimalib.calc.Number;
+import org.fimalib.calc.Double;
 import org.fimalib.calc.FiMaLibCalcException;
 import org.fimalib.calc.formula.FormulaException;
 
@@ -65,14 +67,47 @@ public class Pow extends Node {
         return lVal.pow(rVal);
     }
 
+    /**
+     * Returns the derivative of the node
+     * 
+     * @param parameterName (String) the variable by with to derive
+     * @return the derivative (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(this.subNodes[1].isNumber()) {
+            try {
+                Number calc = this.subNodes[1].calculate(null);
+                Number calc_1 = calc.sub(new Double(1.0, calc.getNumberFormat()));
+                Double one = new Double(1.0, calc.getNumberFormat());
+                
+                if(calc_1.equals(one))
+                    return new Mul(new Mul(new Constant(calc), this.subNodes[0].derive(parameterName)), this.subNodes[0].copy());
+                else 
+                    return new Mul(new Mul(new Constant(calc), this.subNodes[0].derive(parameterName)), new Pow(this.subNodes[0].copy(), new Constant(calc_1)));
+            }
+            catch (FiMaLibCalcException ex) {
+                throw new FormulaException("Error when deriving Pow", ex);
+            }
+        }
+        else 
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Pow(this.subNodes[0].copy(), this.subNodes[1].copy());
     }
 
     /**

@@ -19,6 +19,8 @@
 package org.fimalib.calc.formula.nodes;
 
 import java.util.HashMap;
+import org.fimalib.calc.Double;
+import org.fimalib.calc.Number;
 import org.fimalib.calc.FiMaLibCalcException;
 import org.fimalib.calc.formula.FormulaException;
 
@@ -64,14 +66,87 @@ public class Mul extends Node {
         return lVal.mul(rVal);
     }
 
+    /**
+     * Returns the derivative of the node
+     * 
+     * @param parameterName (String) the variable by with to derive
+     * @return the derivative (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Node lDerived = this.subNodes[0].derive(parameterName);
+        Node rDerived = this.subNodes[1].derive(parameterName);
+        
+        Node mull = new Mul(lDerived, this.subNodes[1].copy());
+        Node mulr = new Mul(this.subNodes[0].copy(), rDerived);
+        boolean lZero = false;
+        boolean rZero = false;
+        
+        if(lDerived.isNumber()) {
+            try {
+                Number result = lDerived.calculate(null);
+                Double zero = new Double(0.0, result.getNumberFormat());
+                
+                if(result.equals(zero)) lZero = true;
+            }
+            catch (Exception ex) {
+                
+            }
+        }
+        
+        if(rDerived.isNumber()) {
+            try {
+                Number result = rDerived.calculate(null);
+                Double zero = new Double(0.0, result.getNumberFormat());
+                
+                if(result.equals(zero)) rZero = true;
+            }
+            catch (Exception ex) {
+                
+            }
+        }
+        
+        if(this.subNodes[0].isNumber()) {
+            try {
+                Number result = this.subNodes[0].calculate(null);
+                Double zero = new Double(0.0, result.getNumberFormat());
+                
+                if(result.equals(zero)) lZero = true;
+            }
+            catch (Exception ex) {
+                
+            }
+        }
+        
+        if(lZero) return mulr;
+        if(rZero) return mull;
+        
+        Node add = new Add(mull, mulr);
+        
+        return add;
     }
 
+    /**
+     * Returns the integral of the node
+     * 
+     * @param parameterName (String) the variable by which to integrate
+     * @return the integral (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Mul(this.subNodes[0].copy(), this.subNodes[1].copy());
     }
 
     /**

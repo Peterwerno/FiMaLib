@@ -19,6 +19,7 @@
 package org.fimalib.calc.formula.nodes;
 
 import java.util.HashMap;
+import org.fimalib.calc.Double;
 import org.fimalib.calc.FiMaLibCalcException;
 import org.fimalib.calc.formula.FormulaException;
 
@@ -64,14 +65,42 @@ public class Div extends Node {
         return lVal.div(rVal);
     }
 
+    /**
+     * Returns the derivative of the node
+     * 
+     * @param parameterName (String) the variable by with to derive
+     * @return the derivative (Node)
+     * @throws FormulaException 
+     */
     @Override
     public Node derive(String parameterName) throws FormulaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Node lDerived = this.subNodes[0].derive(parameterName);
+        Node rDerived = this.subNodes[1].derive(parameterName);
+        
+        
+        Node mull = new Mul(lDerived, this.subNodes[0].copy());
+        Node mulr = new Mul(this.subNodes[1].copy(), rDerived);
+        
+        Node sub = new Add(mull, mulr);
+        
+        Node n2 = new Pow(this.subNodes[1].copy(), new Constant(new Double(2.0)));
+        
+        return new Div(sub, n2);
     }
 
     @Override
     public Node integrate(String parameterName) throws FormulaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    /**
+     * Creates a copy of this node
+     * 
+     * @return the copy (Node)
+     */
+    @Override
+    public Node copy() {
+        return new Div(this.subNodes[0].copy(), this.subNodes[1].copy());
     }
 
     /**
