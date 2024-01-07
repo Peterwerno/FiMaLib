@@ -46,7 +46,17 @@ import java.util.Stack;
  */
 public class Formula {
     // Here, user defined functions can be stored
-    public static ArrayList<Function> userDefinedFunctions = new ArrayList<>();
+    public static ArrayList<UserDefinedFunction> userDefinedFunctions = new ArrayList<>();
+    
+    /**
+     * Adds a new user defined function to the list of predefined user defined
+     * functions.
+     * 
+     * @param function (UserDefinedFunction) the new user defined function
+     */
+    public static void addUserDefinedFunction(UserDefinedFunction function) {
+        userDefinedFunctions.add(function);
+    }
     
     /**
      * Generic formula parser which returns the formula as a tree
@@ -685,54 +695,58 @@ public class Formula {
         // Now check for function names:
         // Start with the longest function names first, this avoids errors!
         
-        if(formula.startsWith("arcsinh")) return new Arcsinh(parse(formula.substring(7), format));
-        if(formula.startsWith("arccosh")) return new Arccosh(parse(formula.substring(7), format));
-        if(formula.startsWith("arctanh")) return new Arctanh(parse(formula.substring(7), format));
-        if(formula.startsWith("arccoth")) return new Arccoth(parse(formula.substring(7), format));
-        if(formula.startsWith("arcsech")) return new Arcsech(parse(formula.substring(7), format));
-        if(formula.startsWith("arccsch")) return new Arccsch(parse(formula.substring(7), format));
+        if(formula.startsWith("arcsinh(")) return new Arcsinh(parse(formula.substring(7), format));
+        if(formula.startsWith("arccosh(")) return new Arccosh(parse(formula.substring(7), format));
+        if(formula.startsWith("arctanh(")) return new Arctanh(parse(formula.substring(7), format));
+        if(formula.startsWith("arccoth(")) return new Arccoth(parse(formula.substring(7), format));
+        if(formula.startsWith("arcsech(")) return new Arcsech(parse(formula.substring(7), format));
+        if(formula.startsWith("arccsch(")) return new Arccsch(parse(formula.substring(7), format));
 
-        if(formula.startsWith("arcsin")) return new Arcsin(parse(formula.substring(6), format));
-        if(formula.startsWith("arccos")) return new Arccos(parse(formula.substring(6), format));
-        if(formula.startsWith("arctan")) return new Arctan(parse(formula.substring(6), format));
-        if(formula.startsWith("arccot")) return new Arccot(parse(formula.substring(6), format));
-        if(formula.startsWith("arcsec")) return new Arcsec(parse(formula.substring(6), format));
-        if(formula.startsWith("arccsc")) return new Arccsc(parse(formula.substring(6), format));
+        if(formula.startsWith("arcsin(")) return new Arcsin(parse(formula.substring(6), format));
+        if(formula.startsWith("arccos(")) return new Arccos(parse(formula.substring(6), format));
+        if(formula.startsWith("arctan(")) return new Arctan(parse(formula.substring(6), format));
+        if(formula.startsWith("arccot(")) return new Arccot(parse(formula.substring(6), format));
+        if(formula.startsWith("arcsec(")) return new Arcsec(parse(formula.substring(6), format));
+        if(formula.startsWith("arccsc(")) return new Arccsc(parse(formula.substring(6), format));
         
-        if(formula.startsWith("sinh")) return new Sinh(parse(formula.substring(4), format));
-        if(formula.startsWith("cosh")) return new Cosh(parse(formula.substring(4), format));
-        if(formula.startsWith("tanh")) return new Tanh(parse(formula.substring(4), format));
-        if(formula.startsWith("coth")) return new Coth(parse(formula.substring(4), format));
-        if(formula.startsWith("sech")) return new Sech(parse(formula.substring(4), format));
-        if(formula.startsWith("csch")) return new Csch(parse(formula.substring(4), format));
+        if(formula.startsWith("sinh(")) return new Sinh(parse(formula.substring(4), format));
+        if(formula.startsWith("cosh(")) return new Cosh(parse(formula.substring(4), format));
+        if(formula.startsWith("tanh(")) return new Tanh(parse(formula.substring(4), format));
+        if(formula.startsWith("coth(")) return new Coth(parse(formula.substring(4), format));
+        if(formula.startsWith("sech(")) return new Sech(parse(formula.substring(4), format));
+        if(formula.startsWith("csch(")) return new Csch(parse(formula.substring(4), format));
 
-        if(formula.startsWith("sqrt")) return new Sqrt(parse(formula.substring(4), format));
-        if(formula.startsWith("rand")) return new Rand(parse(formula.substring(4), format));
+        if(formula.startsWith("sqrt(")) return new Sqrt(parse(formula.substring(4), format));
+        if(formula.startsWith("rand(")) return new Rand(parse(formula.substring(4), format));
 
-        if(formula.startsWith("sin")) return new Sin(parse(formula.substring(3), format));
-        if(formula.startsWith("cos")) return new Cos(parse(formula.substring(3), format));
-        if(formula.startsWith("tan")) return new Tan(parse(formula.substring(3), format));
-        if(formula.startsWith("cot")) return new Cot(parse(formula.substring(3), format));
-        if(formula.startsWith("sec")) return new Sec(parse(formula.substring(3), format));
-        if(formula.startsWith("csc")) return new Csc(parse(formula.substring(3), format));
+        if(formula.startsWith("sin(")) return new Sin(parse(formula.substring(3), format));
+        if(formula.startsWith("cos(")) return new Cos(parse(formula.substring(3), format));
+        if(formula.startsWith("tan(")) return new Tan(parse(formula.substring(3), format));
+        if(formula.startsWith("cot(")) return new Cot(parse(formula.substring(3), format));
+        if(formula.startsWith("sec(")) return new Sec(parse(formula.substring(3), format));
+        if(formula.startsWith("csc(")) return new Csc(parse(formula.substring(3), format));
         
-        if(formula.startsWith("abs")) return new Abs(parse(formula.substring(3), format));
-        if(formula.startsWith("sgn")) return new Sgn(parse(formula.substring(3), format));
-        if(formula.startsWith("exp")) return new Exp(parse(formula.substring(3), format));
-        if(formula.startsWith("log")) return new Log(parse(formula.substring(3), format));
-        if(formula.startsWith("neg")) return new Neg(parse(formula.substring(3), format));
-        if(formula.startsWith("int")) return new Int(parse(formula.substring(3), format));
+        if(formula.startsWith("abs(")) return new Abs(parse(formula.substring(3), format));
+        if(formula.startsWith("sgn(")) return new Sgn(parse(formula.substring(3), format));
+        if(formula.startsWith("exp(")) return new Exp(parse(formula.substring(3), format));
+        if(formula.startsWith("log(")) return new Log(parse(formula.substring(3), format));
+        if(formula.startsWith("neg(")) return new Neg(parse(formula.substring(3), format));
+        if(formula.startsWith("int(")) return new Int(parse(formula.substring(3), format));
 
-        if(formula.startsWith("ln")) return new Ln(parse(formula.substring(2), format));
+        if(formula.startsWith("ln(")) return new Ln(parse(formula.substring(2), format));
         
         // Browse through all system defined functions
         Function systemFunc = Function.getFunction(formula, format);
         if(systemFunc != null) return systemFunc;
         
         // Browse through all user defined functions
-        for(Function func : userDefinedFunctions) {
-            if(formula.startsWith(func.getName())) {
-                return func;
+        for(UserDefinedFunction func : userDefinedFunctions) {
+            if(formula.startsWith(func.getName() + "(")) {
+                UserDefinedFunction copy = func.copy();
+                String parameters = formula.substring(func.getName().length());
+                
+                Function.parseFunction(parameters, copy, format);
+                return copy;
             }
         }
         
